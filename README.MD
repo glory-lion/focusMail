@@ -2,7 +2,7 @@
 
 ## What this is
 
-A mobile app (hackathon build, 10-day timeline, 3-person team) that connects to a user's Gmail (and later Outlook) account, automatically classifies incoming emails by urgency, summarizes them, and lets the user act on what matters without reading a full inbox. Only the last 7 days of email are ever stored; older mail is auto-discarded.
+A mobile app that connects to a user's Gmail (and later Outlook) account, automatically classifies incoming emails by urgency, summarizes them, and lets the user act on what matters without reading a full inbox. Only the last 7 days of email are ever stored; older mail is auto-discarded.
 
 ## Core user-facing features
 

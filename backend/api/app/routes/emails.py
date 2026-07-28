@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from schema import Classification, ClassifiedEmail
+from schema import ActionItem, Classification, ClassifiedEmail
 from sqlmodel import Session, select
 
 from ..auth.dependencies import get_current_user
@@ -35,12 +35,15 @@ class DayGroup(BaseModel):
 
 def _to_email_out(email: EmailMessage) -> EmailOut:
     classification = None
-    if email.needs_action is not None:
+    if email.is_important is not None:
         classification = Classification(
-            needs_action=email.needs_action,
-            has_deadline=email.has_deadline,
             is_important=email.is_important,
-            summary=email.summary or "",
+            summary_short=email.summary_short or "",
+            summary_detailed=email.summary_detailed or "",
+            deadline=email.deadline,
+            action_items=[ActionItem(**item) for item in (email.action_items or [])],
+            suggested_reply=email.suggested_reply or "",
+            reply_contains_commitment=email.reply_contains_commitment or False,
         )
     return EmailOut(
         id=email.id,

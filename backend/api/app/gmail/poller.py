@@ -1,3 +1,5 @@
+
+from schema import StyleProfile
 from sqlmodel import Session, select
 
 from .. import ai_client
@@ -16,18 +18,28 @@ def poll_all_users() -> None:
 
 def _poll_user(session: Session, user: User) -> None:
     fetched = gmail_client.fetch_recent_emails(user)
-    for normalized in fetched:
-        already_stored = session.exec(
+
+    new_emails = [
+        normalized
+        for normalized in fetched
+        if not session.exec(
             select(EmailMessage).where(
                 EmailMessage.user_id == user.id,
                 EmailMessage.gmail_id == normalized.gmail_id,
             )
         ).first()
-        if already_stored:
-            continue
+    ]
+    if not new_emails:
+        return
 
-        classification = ai_client.classify_and_summarize(normalized)
+    style_profile = StyleProfile(**user.style_profile) if user.style_profile else None
 
+    # One call for every new email this poll found — whether that's 1 or
+    # 20, the ai-service runs them concurrently rather than us looping
+    # one HTTP round-trip per email.
+    classifications = ai_client.classify_and_summarize_batch(new_emails, style_profile)
+
+    for normalized, classification in zip(new_emails, classifications):
         email = EmailMessage(
             user_id=user.id,
             gmail_id=normalized.gmail_id,
@@ -37,10 +49,13 @@ def _poll_user(session: Session, user: User) -> None:
             snippet=normalized.snippet,
             received_at=normalized.received_at,
             gmail_link=normalized.gmail_link,
-            needs_action=classification.needs_action,
-            has_deadline=classification.has_deadline,
             is_important=classification.is_important,
-            summary=classification.summary,
+            summary_short=classification.summary_short,
+            summary_detailed=classification.summary_detailed,
+            deadline=classification.deadline,
+            action_items=[item.model_dump(mode="json") for item in classification.action_items],
+            suggested_reply=classification.suggested_reply,
+            reply_contains_commitment=classification.reply_contains_commitment,
         )
         session.add(email)
         session.commit()

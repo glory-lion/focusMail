@@ -84,6 +84,42 @@ def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEma
     return emails
 
 
+def _extract_body(payload: dict) -> str:
+    """Gmail messages are MIME, often multiple nested parts (plain text,
+    HTML, attachments). Walk the tree looking for text/plain; if none
+    exists anywhere, fall back to raw text/html rather than showing nothing.
+    """
+    if payload.get("mimeType") == "text/plain":
+        data = payload.get("body", {}).get("data")
+        if data:
+            return base64.urlsafe_b64decode(data).decode("utf-8", errors="replace")
+
+    html_fallback = ""
+    for part in payload.get("parts", []):
+        text = _extract_body(part)
+        if not text:
+            continue
+        if part.get("mimeType") == "text/html":
+            html_fallback = html_fallback or text
+        else:
+            return text
+    return html_fallback
+
+
+def fetch_body(user: User, gmail_id: str) -> str:
+    """Fetches the full body of one message, live, on demand.
+
+    Deliberately not called during polling and never stored in our
+    database — only pulled when a user actually opens this specific email.
+    """
+    credentials = _credentials_from_user(user)
+    service = build("gmail", "v1", credentials=credentials)
+    message = (
+        service.users().messages().get(userId="me", id=gmail_id, format="full").execute()
+    )
+    return _extract_body(message["payload"])
+
+
 def send_reply(user: User, email: EmailMessage, body_text: str) -> None:
     """Sends a reply in an existing thread. Only ever called from an explicit,
     per-email user action (the in-app Send button) — never from the poller.

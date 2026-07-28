@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -17,9 +18,14 @@ class EmailOut(ClassifiedEmail):
     """The shared ClassifiedEmail shape, plus our own id so the client can
     address this email in later requests (GET /emails/{id}, .../send).
     Deliberately does NOT include user_id or any other internal DB detail.
+
+    `body` is only ever populated by GET /emails/{id} — fetched live from
+    Gmail on open, never stored — so it's None everywhere else, including
+    the /emails list.
     """
 
     id: int
+    body: Optional[str] = None
 
 
 class DayGroup(BaseModel):
@@ -78,7 +84,10 @@ def get_email(
     email = session.get(EmailMessage, email_id)
     if not email or email.user_id != user.id:
         raise HTTPException(status_code=404, detail="Email not found")
-    return _to_email_out(email)
+
+    out = _to_email_out(email)
+    out.body = gmail_client.fetch_body(user, email.gmail_id)
+    return out
 
 
 class SendReplyRequest(BaseModel):

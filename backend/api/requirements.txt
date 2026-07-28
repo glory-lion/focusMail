@@ -1,0 +1,25 @@
+# Web framework — runs our API and gives us the /docs test UI
+fastapi
+uvicorn[standard]
+
+# Database — SQLModel is an ORM (lets us define tables as Python classes
+# instead of writing raw SQL)
+sqlmodel
+
+# Loads variables from a .env file into the environment
+python-dotenv
+
+# Official Google libraries for OAuth + calling the Gmail API
+google-auth
+google-auth-oauthlib
+google-api-python-client
+
+# Runs scheduled/background jobs (polling, daily discard, daily digest)
+apscheduler
+
+# For calling teammate B's ai-service, and Expo's push API, over HTTP
+httpx
+
+# The shared email/classification schema (shared/ folder), installed
+# editable so both services always use the exact same definitions
+-e ../../shared

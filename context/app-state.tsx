@@ -1,0 +1,92 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+
+import { defaultNotificationSettings, defaultProfile } from '@/data/mockProfile';
+import { connectAccount as connectAccountService } from '@/services/accountService';
+import type { Account, NotificationSettings, Provider, UserProfile } from '@/types/mail';
+
+const STORAGE_KEY = 'focus-mail-app/state';
+
+interface PersistedState {
+  account: Account | null;
+  notificationSettings: NotificationSettings;
+  profile: UserProfile;
+  onboardingComplete: boolean;
+}
+
+interface AppStateContextValue extends PersistedState {
+  isHydrated: boolean;
+  connectAccount: (provider: Provider) => Promise<void>;
+  updateNotificationSettings: (partial: Partial<NotificationSettings>) => void;
+  updateProfile: (partial: Partial<UserProfile>) => void;
+  completeOnboarding: () => void;
+  logout: () => void;
+}
+
+const AppStateContext = createContext<AppStateContextValue | undefined>(undefined);
+
+export function AppStateProvider({ children }: { children: ReactNode }) {
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [account, setAccount] = useState<Account | null>(null);
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>(
+    defaultNotificationSettings
+  );
+  const [profile, setProfile] = useState<UserProfile>(defaultProfile);
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed: PersistedState = JSON.parse(raw);
+          setAccount(parsed.account);
+          setNotificationSettings(parsed.notificationSettings);
+          setProfile(parsed.profile);
+          setOnboardingComplete(parsed.onboardingComplete);
+        }
+      } finally {
+        setIsHydrated(true);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    const state: PersistedState = { account, notificationSettings, profile, onboardingComplete };
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state)).catch(() => {});
+  }, [isHydrated, account, notificationSettings, profile, onboardingComplete]);
+
+  const value = useMemo<AppStateContextValue>(
+    () => ({
+      account,
+      notificationSettings,
+      profile,
+      onboardingComplete,
+      isHydrated,
+      connectAccount: async (provider: Provider) => {
+        const connected = await connectAccountService(provider);
+        setAccount(connected);
+      },
+      updateNotificationSettings: (partial) =>
+        setNotificationSettings((prev) => ({ ...prev, ...partial })),
+      updateProfile: (partial) => setProfile((prev) => ({ ...prev, ...partial })),
+      completeOnboarding: () => setOnboardingComplete(true),
+      logout: () => {
+        setAccount(null);
+        setOnboardingComplete(false);
+      },
+    }),
+    [account, notificationSettings, profile, onboardingComplete, isHydrated]
+  );
+
+  return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
+}
+
+export function useAppState(): AppStateContextValue {
+  const context = useContext(AppStateContext);
+  if (!context) {
+    throw new Error('useAppState must be used within an AppStateProvider');
+  }
+  return context;
+}

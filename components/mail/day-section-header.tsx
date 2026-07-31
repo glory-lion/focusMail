@@ -1,10 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export function DaySectionHeader({ label }: { label: string }) {
+export function DaySectionHeader({ label, date }: { label: string; date: string }) {
   const colorScheme = useColorScheme() ?? 'light';
 
   return (
@@ -12,7 +12,7 @@ export function DaySectionHeader({ label }: { label: string }) {
       <ThemedText type="defaultSemiBold" style={styles.label}>
         {label}
       </ThemedText>
-      <View style={[styles.line, { backgroundColor: Colors[colorScheme].icon }]} />
+      <ThemedText style={[styles.date, { color: Colors[colorScheme].icon }]}>{date}</ThemedText>
     </View>
   );
 }
@@ -21,19 +21,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: 20,
     paddingBottom: 10,
   },
   label: {
-    fontSize: 13,
-    letterSpacing: 0.5,
-    opacity: 0.7,
+    fontSize: 14,
   },
-  line: {
-    flex: 1,
-    height: StyleSheet.hairlineWidth,
-    opacity: 0.4,
+  date: {
+    fontSize: 13,
   },
 });

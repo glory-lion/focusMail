@@ -1,21 +1,24 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Colors, Fonts } from '@/constants/theme';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-function formatDisplay(time: string): string {
-  const [hourStr, minuteStr] = time.split(':');
-  const hour = Number(hourStr);
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
-  return `${displayHour}:${minuteStr} ${period}`;
+type Period = 'AM' | 'PM';
+
+function parse(value: string): { hour24: number; minute: number } {
+  const [hour24, minute] = value.split(':').map(Number);
+  return { hour24, minute };
 }
 
-function clamp(value: number, min: number, max: number): number {
-  if (value < min) return max;
-  if (value > max) return min;
-  return value;
+function toDisplayHour(hour24: number): number {
+  const hour = hour24 % 12;
+  return hour === 0 ? 12 : hour;
+}
+
+function format(hour24: number, minute: number): string {
+  return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
 export function TimePicker({
@@ -29,83 +32,109 @@ export function TimePicker({
 }) {
   const colorScheme = useColorScheme() ?? 'light';
   const tint = Colors[colorScheme].tint;
-  const [hour, minute] = value.split(':').map(Number);
+  const { hour24, minute } = parse(value);
+  const period: Period = hour24 >= 12 ? 'PM' : 'AM';
+  const displayHour = toDisplayHour(hour24);
 
-  const setHour = (next: number) => {
-    onChange(`${String(clamp(next, 0, 23)).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
+  const shiftMinutes = (delta: number) => {
+    const total = (((hour24 * 60 + minute + delta) % 1440) + 1440) % 1440;
+    onChange(format(Math.floor(total / 60), total % 60));
   };
-  const setMinute = (next: number) => {
-    onChange(`${String(hour).padStart(2, '0')}:${String(clamp(next, 0, 59)).padStart(2, '0')}`);
+
+  const setPeriod = (next: Period) => {
+    if (next === period) return;
+    const nextHour24 = next === 'PM' ? (hour24 + 12) % 24 : (hour24 - 12 + 24) % 24;
+    onChange(format(nextHour24, minute));
   };
 
   return (
-    <View style={styles.row}>
+    <View style={styles.wrapper}>
       {label ? <ThemedText type="defaultSemiBold">{label}</ThemedText> : null}
-      <View style={styles.stepperGroup}>
-        <Stepper label={String(hour).padStart(2, '0')} onIncrement={() => setHour(hour + 1)} onDecrement={() => setHour(hour - 1)} tint={tint} />
-        <ThemedText style={styles.colon}>:</ThemedText>
-        <Stepper label={String(minute).padStart(2, '0')} onIncrement={() => setMinute(minute + 1)} onDecrement={() => setMinute(minute - 1)} tint={tint} />
-        <ThemedText style={styles.display}>{formatDisplay(value)}</ThemedText>
+      <View style={styles.row}>
+        <View
+          style={[
+            styles.timeBox,
+            { backgroundColor: Colors[colorScheme].background, borderColor: Colors[colorScheme].border },
+          ]}>
+          <ThemedText type="title" style={styles.timeText}>
+            {String(displayHour).padStart(2, '0')}:{String(minute).padStart(2, '0')}
+          </ThemedText>
+        </View>
+
+        <View style={styles.stepper}>
+          <Pressable onPress={() => shiftMinutes(30)} hitSlop={6}>
+            <IconSymbol name="chevron.up" size={20} color={tint} />
+          </Pressable>
+          <Pressable onPress={() => shiftMinutes(-30)} hitSlop={6}>
+            <IconSymbol name="chevron.down" size={20} color={Colors[colorScheme].icon} />
+          </Pressable>
+        </View>
+
+        <View style={[styles.periodToggle, { borderColor: Colors[colorScheme].border }]}>
+          <Pressable
+            onPress={() => setPeriod('AM')}
+            style={[styles.periodOption, period === 'AM' && { backgroundColor: tint }]}>
+            <ThemedText
+              type="defaultSemiBold"
+              style={styles.periodLabel}
+              lightColor={period === 'AM' ? '#fff' : Colors[colorScheme].text}
+              darkColor={period === 'AM' ? '#fff' : Colors[colorScheme].text}>
+              AM
+            </ThemedText>
+          </Pressable>
+          <Pressable
+            onPress={() => setPeriod('PM')}
+            style={[styles.periodOption, period === 'PM' && { backgroundColor: tint }]}>
+            <ThemedText
+              type="defaultSemiBold"
+              style={styles.periodLabel}
+              lightColor={period === 'PM' ? '#fff' : Colors[colorScheme].text}
+              darkColor={period === 'PM' ? '#fff' : Colors[colorScheme].text}>
+              PM
+            </ThemedText>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
 }
 
-function Stepper({
-  label,
-  onIncrement,
-  onDecrement,
-  tint,
-}: {
-  label: string;
-  onIncrement: () => void;
-  onDecrement: () => void;
-  tint: string;
-}) {
-  return (
-    <View style={styles.stepper}>
-      <Pressable onPress={onDecrement} hitSlop={8}>
-        <ThemedText style={[styles.stepperButton, { color: tint }]}>−</ThemedText>
-      </Pressable>
-      <ThemedText type="defaultSemiBold" style={styles.stepperValue}>
-        {label}
-      </ThemedText>
-      <Pressable onPress={onIncrement} hitSlop={8}>
-        <ThemedText style={[styles.stepperButton, { color: tint }]}>+</ThemedText>
-      </Pressable>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  row: {
-    paddingVertical: 14,
+  wrapper: {
     gap: 10,
   },
-  stepperGroup: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
+  },
+  timeBox: {
+    width: 96,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  timeText: {
+    fontSize: 21,
+    lineHeight: 26,
+    fontVariant: ['tabular-nums'],
   },
   stepper: {
-    alignItems: 'center',
     gap: 2,
   },
-  stepperButton: {
-    fontSize: 20,
-    fontFamily: Fonts.semiBold,
-    paddingHorizontal: 6,
+  periodToggle: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-  stepperValue: {
-    fontSize: 16,
-    minWidth: 28,
-    textAlign: 'center',
+  periodOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
   },
-  colon: {
-    fontSize: 18,
-  },
-  display: {
-    marginLeft: 8,
-    opacity: 0.6,
+  periodLabel: {
+    fontSize: 12,
   },
 });

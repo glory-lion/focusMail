@@ -2,6 +2,7 @@ import type { NotificationSettings, UserProfile } from '@/types/mail';
 
 export const defaultProfile: UserProfile = {
   name: 'Chelsea Gratia',
+  title: 'Product Manager',
   email: 'chelseagratiaa@gmail.com',
 };
 

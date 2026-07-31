@@ -23,6 +23,12 @@ export interface EmailSender {
   avatarUrl?: string;
 }
 
+export interface Attachment {
+  fileName: string;
+  fileSizeLabel: string;
+  fileType: string;
+}
+
 export interface Email {
   id: string;
   sender: EmailSender;
@@ -38,6 +44,9 @@ export interface Email {
   suggestedReply: string;
   read: boolean;
   hasAttachment: boolean;
+  attachments: Attachment[];
+  archived: boolean;
+  deleted: boolean;
 }
 
 export interface NotificationSettings {
@@ -48,6 +57,7 @@ export interface NotificationSettings {
 
 export interface UserProfile {
   name: string;
+  title: string;
   email: string;
   avatarUrl?: string;
 }

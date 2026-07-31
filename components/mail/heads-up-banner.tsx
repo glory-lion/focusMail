@@ -4,8 +4,8 @@ import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Palette } from '@/constants/theme';
 
-export function HeadsUpBanner({ critical, escalated }: { critical: number; escalated: number }) {
-  if (critical === 0 && escalated === 0) {
+export function HeadsUpBanner({ count }: { count: number }) {
+  if (count === 0) {
     return null;
   }
 
@@ -14,13 +14,9 @@ export function HeadsUpBanner({ critical, escalated }: { critical: number; escal
       <IconSymbol name="exclamationmark.triangle.fill" size={18} color={Palette.critical} />
       <ThemedText style={styles.text} lightColor={Palette.critical} darkColor={Palette.critical}>
         <ThemedText type="defaultSemiBold" lightColor={Palette.critical} darkColor={Palette.critical}>
-          {critical} critical
+          {count} important emails
         </ThemedText>{' '}
-        and{' '}
-        <ThemedText type="defaultSemiBold" lightColor={Palette.critical} darkColor={Palette.critical}>
-          {escalated} escalated
-        </ThemedText>{' '}
-        emails need your attention
+        need your attention
       </ThemedText>
     </View>
   );
@@ -41,7 +37,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 13,
     lineHeight: 20,
   },
 });

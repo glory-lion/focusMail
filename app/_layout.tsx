@@ -28,13 +28,13 @@ function RootNavigator() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ animation: 'none' }}>
       <Stack.Protected guard={!onboardingComplete}>
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       </Stack.Protected>
       <Stack.Protected guard={onboardingComplete}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="mail/[id]" options={{ title: '' }} />
+        <Stack.Screen name="mail/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ presentation: 'card' }} />
       </Stack.Protected>
     </Stack>

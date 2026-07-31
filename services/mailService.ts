@@ -29,6 +29,32 @@ export function markAsRead(id: string): Promise<void> {
   return delay(undefined);
 }
 
+export function markAsUnread(id: string): Promise<void> {
+  const email = mockEmails.find((item) => item.id === id);
+  if (email) {
+    email.read = false;
+  }
+  return delay(undefined);
+}
+
+export function setArchived(id: string, archived: boolean): Promise<void> {
+  const email = mockEmails.find((item) => item.id === id);
+  if (email) {
+    email.archived = archived;
+    if (archived) email.deleted = false;
+  }
+  return delay(undefined);
+}
+
+export function setDeleted(id: string, deleted: boolean): Promise<void> {
+  const email = mockEmails.find((item) => item.id === id);
+  if (email) {
+    email.deleted = deleted;
+    if (deleted) email.archived = false;
+  }
+  return delay(undefined);
+}
+
 export interface EmailSection {
   dayBucket: DayBucket;
   data: Email[];
@@ -66,18 +92,26 @@ export function groupEmailsByDay(emails: Email[]): EmailSection[] {
   return sections;
 }
 
-export type EmailFilter = 'all' | 'unread' | 'attachments' | 'urgent';
+export type EmailFilter = 'all' | 'unread' | 'attachments' | 'urgent' | 'archived' | 'deleted';
 
 export function filterEmails(emails: Email[], filter: EmailFilter): Email[] {
+  if (filter === 'archived') {
+    return emails.filter((email) => email.archived);
+  }
+  if (filter === 'deleted') {
+    return emails.filter((email) => email.deleted);
+  }
+
+  const active = emails.filter((email) => !email.archived && !email.deleted);
   switch (filter) {
     case 'unread':
-      return emails.filter((email) => !email.read);
+      return active.filter((email) => !email.read);
     case 'attachments':
-      return emails.filter((email) => email.hasAttachment);
+      return active.filter((email) => email.hasAttachment);
     case 'urgent':
-      return emails.filter((email) => email.important);
+      return active.filter((email) => email.important);
     default:
-      return emails;
+      return active;
   }
 }
 

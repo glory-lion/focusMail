@@ -20,6 +20,9 @@ export const Palette = {
   warning: '#FB923C',
   action: '#818CF8',
   panelBackground: '#0B0F19',
+  importantRed: '#EF4444',
+  unreadBackgroundLight: '#E1E9FA',
+  unreadBackgroundDark: 'rgba(37,99,235,0.14)',
 };
 
 export const Colors = {
@@ -31,7 +34,7 @@ export const Colors = {
     tabIconDefault: secondary,
     tabIconSelected: primary,
     card: '#fff',
-    border: '#E2E8F0',
+    border: '#94A3B8',
   },
   dark: {
     text: '#F1F5F9',
@@ -41,7 +44,7 @@ export const Colors = {
     tabIconDefault: '#94A3B8',
     tabIconSelected: primary,
     card: '#1E293B',
-    border: 'rgba(241,245,249,0.12)',
+    border: 'rgba(241,245,249,0.28)',
   },
 };
 

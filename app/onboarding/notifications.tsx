@@ -1,17 +1,20 @@
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { NotificationSettingCard } from '@/components/settings/notification-setting-card';
 import { ScheduleDeliveryBox } from '@/components/settings/schedule-delivery-box';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Colors, Palette } from '@/constants/theme';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Colors } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function NotificationSettingsScreen() {
   const { notificationSettings, updateNotificationSettings, completeOnboarding } = useAppState();
   const colorScheme = useColorScheme() ?? 'light';
+  const insets = useSafeAreaInsets();
 
   const handleFinish = () => {
     completeOnboarding();
@@ -20,6 +23,9 @@ export default function NotificationSettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <Pressable onPress={() => router.back()} hitSlop={10} style={[styles.backButton, { top: insets.top + 12 }]}>
+        <IconSymbol name="arrow.left" size={22} color={Colors[colorScheme].text} />
+      </Pressable>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <ThemedText type="title">Stay in the loop</ThemedText>
@@ -29,8 +35,6 @@ export default function NotificationSettingsScreen() {
         </View>
 
         <NotificationSettingCard
-          icon="bolt.fill"
-          iconBackground={Palette.iconBlue}
           title="Immediate Notifications"
           description="Get notified instantly only when high-priority emails land in your inbox. No more notification fatigue from newsletters or bulk updates."
           value={notificationSettings.immediateEnabled}
@@ -38,8 +42,6 @@ export default function NotificationSettingsScreen() {
         />
 
         <NotificationSettingCard
-          icon="sparkles"
-          iconBackground={Palette.iconPurple}
           title="Daily Insights"
           description="Receive a beautifully formatted summary of your day's activity. Daily Insights include total email counts, important sender highlights, and AI-detected action items."
           value={notificationSettings.dailyDigestEnabled}
@@ -70,16 +72,24 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
+    paddingTop: 72,
     gap: 20,
     justifyContent: 'center',
     flexGrow: 1,
   },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    zIndex: 1,
+    padding: 4,
+  },
   header: {
     gap: 12,
+    marginTop: 24,
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 22,
     opacity: 0.75,
   },
@@ -90,6 +100,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   finishLabel: {
-    fontSize: 16,
+    fontSize: 15,
   },
 });

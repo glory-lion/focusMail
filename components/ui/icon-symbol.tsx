@@ -35,6 +35,18 @@ const MAPPING = {
   'rectangle.portrait.and.arrow.right': 'logout',
   'exclamationmark.triangle.fill': 'warning',
   'paperclip': 'attach-file',
+  'chevron.up': 'keyboard-arrow-up',
+  'chevron.down': 'keyboard-arrow-down',
+  'exclamationmark.circle.fill': 'error',
+  'doc.text.fill': 'description',
+  'lock.fill': 'lock',
+  'arrow.down.to.line': 'file-download',
+  'archivebox': 'archive',
+  'tray.and.arrow.up.fill': 'unarchive',
+  'trash': 'delete-outline',
+  'trash.slash': 'restore-from-trash',
+  'ellipsis': 'more-vert',
+  'envelope.badge': 'mark-email-unread',
 } as IconMapping;
 
 /**

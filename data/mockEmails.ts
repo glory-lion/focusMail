@@ -37,6 +37,7 @@ interface Seed {
   suggestedReply: string;
   read: boolean;
   hasAttachment: boolean;
+  attachments?: Email['attachments'];
 }
 
 const seeds: Seed[] = [
@@ -65,6 +66,7 @@ const seeds: Seed[] = [
       "Hi Sarah,\n\nI'll have the revenue breakdown and updated projections over to you by 4 PM today, ahead of your 5 PM deadline.\n\nBest,\n" ,
     read: false,
     hasAttachment: true,
+    attachments: [{ fileName: 'Q4_Strategy_Deck.pdf', fileSizeLabel: '4.2 MB', fileType: 'PDF Document' }],
   },
   {
     id: '2',
@@ -160,6 +162,7 @@ const seeds: Seed[] = [
     suggestedReply: "Thanks Michael, I'll take a look at the mocks and see you at the design review Friday at 2 PM.",
     read: false,
     hasAttachment: true,
+    attachments: [{ fileName: 'Onboarding_Flow_v2.fig', fileSizeLabel: '8.1 MB', fileType: 'Figma File' }],
   },
   {
     id: '6',
@@ -222,6 +225,7 @@ const seeds: Seed[] = [
     suggestedReply: "Hi Jessica,\n\nI've reviewed the renewal and it looks good — approving now.\n\nThanks,",
     read: false,
     hasAttachment: true,
+    attachments: [{ fileName: 'TechFlow_Contract_Renewal.pdf', fileSizeLabel: '1.8 MB', fileType: 'PDF Document' }],
   },
   {
     id: '9',
@@ -263,6 +267,7 @@ const seeds: Seed[] = [
     suggestedReply: "I'll locate the receipt and resubmit the report by end of week.",
     read: false,
     hasAttachment: true,
+    attachments: [{ fileName: 'Expense_Report_Rejected.xlsx', fileSizeLabel: '0.3 MB', fileType: 'Excel Spreadsheet' }],
   },
   {
     id: '11',
@@ -410,5 +415,8 @@ export const mockEmails: Email[] = seeds.map((seed) => {
     suggestedReply: seed.suggestedReply,
     read: seed.read,
     hasAttachment: seed.hasAttachment,
+    attachments: seed.attachments ?? [],
+    archived: false,
+    deleted: false,
   };
 });

@@ -15,24 +15,19 @@ export function ProfileAvatar({
   name,
   avatarUrl,
   size = 40,
+  ring = false,
 }: {
   name: string;
   avatarUrl?: string;
   size?: number;
+  ring?: boolean;
 }) {
   const colorScheme = useColorScheme() ?? 'light';
   const tint = Colors[colorScheme].tint;
 
-  if (avatarUrl) {
-    return (
-      <Image
-        source={{ uri: avatarUrl }}
-        style={{ width: size, height: size, borderRadius: size / 2 }}
-      />
-    );
-  }
-
-  return (
+  const avatar = avatarUrl ? (
+    <Image source={{ uri: avatarUrl }} style={{ width: size, height: size, borderRadius: size / 2 }} />
+  ) : (
     <View
       style={[
         styles.circle,
@@ -43,9 +38,26 @@ export function ProfileAvatar({
           backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.15)' : `${tint}22`,
         },
       ]}>
-      <ThemedText style={[styles.initials, { color: tint, fontSize: size * 0.4 }]} type="defaultSemiBold">
+      <ThemedText style={[styles.initials, { color: tint, fontSize: size * 0.38 }]} type="defaultSemiBold">
         {initialsFor(name)}
       </ThemedText>
+    </View>
+  );
+
+  if (!ring) return avatar;
+
+  const ringPadding = Math.max(3, Math.round(size * 0.045));
+  return (
+    <View
+      style={[
+        styles.ring,
+        {
+          padding: ringPadding,
+          borderRadius: (size + ringPadding * 2) / 2,
+          borderColor: colorScheme === 'dark' ? 'rgba(37,99,235,0.35)' : '#DCE7FB',
+        },
+      ]}>
+      {avatar}
     </View>
   );
 }
@@ -57,5 +69,8 @@ const styles = StyleSheet.create({
   },
   initials: {
     lineHeight: undefined,
+  },
+  ring: {
+    borderWidth: 3,
   },
 });

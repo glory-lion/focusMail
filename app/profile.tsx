@@ -1,27 +1,30 @@
 import { router, Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
+import { AccountRow } from '@/components/settings/account-row';
 import { AnalyticsPanel } from '@/components/settings/analytics-panel';
 import { NotificationSettingCard } from '@/components/settings/notification-setting-card';
 import { ProfileAvatar } from '@/components/settings/profile-avatar';
 import { ScheduleDeliveryBox } from '@/components/settings/schedule-delivery-box';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { TopBarTitle } from '@/components/ui/top-bar-title';
 import { Colors, Fonts, Palette } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { getEmails, getWeeklyStats } from '@/services/mailService';
-import type { WeeklyInsightsStats } from '@/types/mail';
+import { filterEmails, getEmails, getWeeklyStats } from '@/services/mailService';
+import type { Provider, WeeklyInsightsStats } from '@/types/mail';
 
 export default function ProfileScreen() {
-  const { profile, updateProfile, notificationSettings, updateNotificationSettings, account, logout } =
+  const { profile, updateProfile, notificationSettings, updateNotificationSettings, account, connectAccount, logout } =
     useAppState();
   const colorScheme = useColorScheme() ?? 'light';
   const [stats, setStats] = useState<WeeklyInsightsStats | null>(null);
+  const nameInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    getEmails().then((emails) => setStats(getWeeklyStats(emails)));
+    getEmails().then((emails) => setStats(getWeeklyStats(filterEmails(emails, 'all'))));
   }, []);
 
   const handleLogout = () => {
@@ -29,43 +32,74 @@ export default function ProfileScreen() {
     router.replace('/onboarding');
   };
 
+  const isConnected = (provider: Provider) => account?.provider === provider && account.connected;
+
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: 'Profile & Settings' }} />
+      <Stack.Screen options={{ headerTitle: () => <TopBarTitle /> }} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.profileHeader}>
-          <ProfileAvatar name={profile.name} avatarUrl={profile.avatarUrl} size={64} />
-          <View style={styles.profileFields}>
-            <TextInput
-              value={profile.name}
-              onChangeText={(name) => updateProfile({ name })}
-              style={[styles.nameInput, { color: Colors[colorScheme].text }]}
-              placeholder="Your name"
-              placeholderTextColor={Colors[colorScheme].icon}
-            />
-            <ThemedText style={[styles.email, { color: Colors[colorScheme].icon }]}>
-              {profile.email}
-            </ThemedText>
-            {account ? (
-              <ThemedText style={[styles.accountLine, { color: Colors[colorScheme].icon }]}>
-                Connected via {account.provider === 'gmail' ? 'Gmail' : 'Outlook'} ({account.emailAddress})
-              </ThemedText>
-            ) : null}
+          <View style={styles.avatarWrap}>
+            <ProfileAvatar name={profile.name} avatarUrl={profile.avatarUrl} size={92} ring />
           </View>
+          <TextInput
+            ref={nameInputRef}
+            value={profile.name}
+            onChangeText={(name) => updateProfile({ name })}
+            style={[styles.nameInput, { color: Colors[colorScheme].text }]}
+            placeholder="Your name"
+            placeholderTextColor={Colors[colorScheme].icon}
+            textAlign="center"
+          />
+          <ThemedText style={[styles.subtitle, { color: Colors[colorScheme].icon }]}>
+            {profile.title} · {profile.email}
+          </ThemedText>
         </View>
+
+        <Section title="Connected Accounts">
+          <View style={[styles.card, { backgroundColor: Colors[colorScheme].card, borderColor: Colors[colorScheme].border }]}>
+            <AccountRow
+              provider="gmail"
+              title="Gmail"
+              subtitle={isConnected('gmail') ? account!.emailAddress : 'Not linked'}
+              onPress={isConnected('gmail') ? undefined : () => connectAccount('gmail')}
+              trailing={
+                isConnected('gmail') ? (
+                  <ConnectedPill />
+                ) : (
+                  <ThemedText type="defaultSemiBold" style={[styles.connectText, { color: Colors[colorScheme].tint }]}>
+                    Connect
+                  </ThemedText>
+                )
+              }
+            />
+            <View style={[styles.divider, { backgroundColor: Colors[colorScheme].border }]} />
+            <AccountRow
+              provider="outlook"
+              title="Outlook"
+              subtitle={isConnected('outlook') ? account!.emailAddress : 'Not linked'}
+              onPress={isConnected('outlook') ? undefined : () => connectAccount('outlook')}
+              trailing={
+                isConnected('outlook') ? (
+                  <ConnectedPill />
+                ) : (
+                  <ThemedText type="defaultSemiBold" style={[styles.connectText, { color: Colors[colorScheme].tint }]}>
+                    Connect
+                  </ThemedText>
+                )
+              }
+            />
+          </View>
+        </Section>
 
         <Section title="Notifications">
           <NotificationSettingCard
-            icon="bolt.fill"
-            iconBackground={Palette.iconBlue}
             title="Immediate Notifications"
-            description="Get notified instantly only when high-priority emails land in your inbox."
+            description="Receive alerts as soon as a priority email arrives."
             value={notificationSettings.immediateEnabled}
             onValueChange={(value) => updateNotificationSettings({ immediateEnabled: value })}
           />
           <NotificationSettingCard
-            icon="sparkles"
-            iconBackground={Palette.iconPurple}
             title="Daily Insights"
             description="Receive a daily summary of email counts, important mail, and key deadlines."
             value={notificationSettings.dailyDigestEnabled}
@@ -95,6 +129,21 @@ export default function ProfileScreen() {
   );
 }
 
+function ConnectedPill() {
+  const colorScheme = useColorScheme() ?? 'light';
+  return (
+    <View
+      style={[
+        styles.pill,
+        { backgroundColor: colorScheme === 'dark' ? 'rgba(37,99,235,0.22)' : '#DCE7FB' },
+      ]}>
+      <ThemedText type="defaultSemiBold" style={styles.pillText} lightColor={Colors.light.tint} darkColor={Colors.dark.tint}>
+        Connected
+      </ThemedText>
+    </View>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={styles.section}>
@@ -116,31 +165,46 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   profileHeader: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: 6,
+    paddingTop: 8,
   },
-  profileFields: {
-    flex: 1,
-    gap: 4,
+  avatarWrap: {
+    marginBottom: 10,
   },
   nameInput: {
-    fontSize: 20,
+    fontSize: 23,
     fontFamily: Fonts.semiBold,
     padding: 0,
+    minWidth: 160,
   },
-  email: {
-    fontSize: 14,
-  },
-  accountLine: {
+  subtitle: {
     fontSize: 13,
-    marginTop: 2,
   },
   section: {
     gap: 12,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 17,
+  },
+  card: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+  },
+  pill: {
+    borderRadius: 999,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+  },
+  pillText: {
+    fontSize: 13,
+  },
+  connectText: {
+    fontSize: 13,
   },
   logoutButton: {
     borderWidth: 1.5,

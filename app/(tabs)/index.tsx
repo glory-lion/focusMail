@@ -8,16 +8,10 @@ import { EmailList } from '@/components/mail/email-list';
 import { FilterChips } from '@/components/mail/filter-chips';
 import { HeadsUpBanner } from '@/components/mail/heads-up-banner';
 import { ProfileAvatar } from '@/components/settings/profile-avatar';
-import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { TopBarTitle } from '@/components/ui/top-bar-title';
 import { useAppState } from '@/context/app-state';
-import {
-  filterEmails,
-  getEmails,
-  getWeeklyStats,
-  groupEmailsByDay,
-  type EmailFilter,
-} from '@/services/mailService';
+import { filterEmails, getEmails, groupEmailsByDay, type EmailFilter } from '@/services/mailService';
 import type { Email } from '@/types/mail';
 
 export default function HomeScreen() {
@@ -32,7 +26,10 @@ export default function HomeScreen() {
     }, [])
   );
 
-  const stats = useMemo(() => getWeeklyStats(emails), [emails]);
+  const importantUnreadCount = useMemo(
+    () => filterEmails(emails, 'all').filter((email) => email.important && !email.read).length,
+    [emails]
+  );
   const sections = useMemo(() => groupEmailsByDay(filterEmails(emails, filter)), [emails, filter]);
 
   return (
@@ -41,9 +38,7 @@ export default function HomeScreen() {
         <Pressable onPress={() => router.push('/profile')} hitSlop={8}>
           <ProfileAvatar name={profile.name} avatarUrl={profile.avatarUrl} size={36} />
         </Pressable>
-        <ThemedText type="title" style={styles.title}>
-          Inbox
-        </ThemedText>
+        <TopBarTitle />
         <View style={styles.spacer} />
       </View>
       <EmailList
@@ -52,7 +47,7 @@ export default function HomeScreen() {
         ListHeaderComponent={
           <>
             <FilterChips active={filter} onChange={setFilter} />
-            <HeadsUpBanner critical={stats.critical} escalated={stats.needAction} />
+            <HeadsUpBanner count={importantUnreadCount} />
           </>
         }
       />
@@ -70,9 +65,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 12,
     gap: 12,
-  },
-  title: {
-    fontSize: 22,
   },
   spacer: {
     width: 36,

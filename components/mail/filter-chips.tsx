@@ -9,7 +9,9 @@ const FILTERS: { key: EmailFilter; label: string }[] = [
   { key: 'all', label: 'All Messages' },
   { key: 'unread', label: 'Unread' },
   { key: 'attachments', label: 'Attachments' },
-  { key: 'urgent', label: 'Urgent' },
+  { key: 'urgent', label: 'Important' },
+  { key: 'archived', label: 'Archived' },
+  { key: 'deleted', label: 'Deleted' },
 ];
 
 export function FilterChips({
@@ -67,6 +69,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
   },
 });

@@ -27,13 +27,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: Fonts.semiBold,
-    fontSize: 11,
+    fontSize: 10,
     letterSpacing: 0.5,
   },
   row: {
     flexDirection: 'row',
   },
   text: {
-    fontSize: 14,
+    fontSize: 13,
   },
 });

@@ -6,7 +6,7 @@ costly failure mode (the user never sees it), while a false positive just
 costs an extra glance.
 
 Usage:
-    python runEval.py                                  # both classifiers, side by side, original 19-email set
+    python runEval.py                                 # both classifiers, side by side, original 19-email set
     python runEval.py --classifier llm
     python runEval.py --dataset labeled_emails_1000.jsonl --classifier llm
 """

@@ -74,8 +74,15 @@ def _mock_classify(email: NormalizedEmail) -> Classification:
     action_words = ["please", "can you", "action required", "respond", "review"]
     has_deadline = any(word in text for word in deadline_words)
     needs_action = any(word in text for word in action_words)
+    urgency_score = min(
+        100,
+        (45 if needs_action else 10)
+        + (40 if has_deadline else 0)
+        + (5 if email.attachments else 0),
+    )
     return Classification(
         is_important=needs_action and has_deadline,
+        urgency_score=urgency_score,
         summary_short=email.snippet[:140],
         summary_detailed=email.snippet,
         deadline=None,

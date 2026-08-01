@@ -85,6 +85,7 @@ def _internal_to_style_profile(profile: dict) -> StyleProfile:
 def _result_to_classification(result: dict) -> Classification:
     return Classification(
         is_important=result["important"],
+        urgency_score=result["urgencyScore"],
         summary_short=result["summaryShort"],
         summary_detailed=result["summaryDetailed"],
         deadline=result["deadline"],

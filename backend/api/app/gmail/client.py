@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from schema import NormalizedEmail
+from schema import Attachment, NormalizedEmail
 
 from ..config import settings
 from ..models import EmailMessage, User
@@ -34,6 +34,25 @@ def _header(headers: list[dict], name: str) -> str:
     return ""
 
 
+def _extract_attachments(payload: dict) -> list[Attachment]:
+    attachments: list[Attachment] = []
+    filename = payload.get("filename", "")
+    body = payload.get("body", {})
+    attachment_id = body.get("attachmentId")
+    if filename and attachment_id:
+        attachments.append(
+            Attachment(
+                attachment_id=attachment_id,
+                filename=filename,
+                mime_type=payload.get("mimeType", "application/octet-stream"),
+                size=body.get("size", 0),
+            )
+        )
+    for part in payload.get("parts", []):
+        attachments.extend(_extract_attachments(part))
+    return attachments
+
+
 def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[NormalizedEmail]:
     """Shared by fetch_recent_emails (INBOX) and fetch_sent_emails (SENT).
 
@@ -42,7 +61,8 @@ def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[Nor
     deadline/action-item extraction, reply draft, or style-profile
     extraction; snippet alone isn't enough for any of those. This doesn't
     add extra API calls (one .get() per message either way), just a bigger
-    response per call.
+    response per call. The MIME part tree in the "full" response is also
+    what attachment metadata is extracted from below.
     """
     credentials = _credentials_from_user(user)
     service = build("gmail", "v1", credentials=credentials)
@@ -77,6 +97,7 @@ def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[Nor
                 body=_extract_body(message["payload"]),
                 received_at=received_at,
                 gmail_link=f"https://mail.google.com/mail/u/0/#inbox/{message['id']}",
+                attachments=_extract_attachments(message["payload"]),
             )
         )
     return emails

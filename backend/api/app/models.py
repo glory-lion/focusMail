@@ -35,6 +35,7 @@ class EmailMessage(SQLModel, table=True):
     received_at: datetime
     gmail_link: str
     is_important: Optional[bool] = None
+    urgency_score: Optional[int] = None
     summary_short: Optional[str] = None
     summary_detailed: Optional[str] = None
     deadline: Optional[datetime] = None
@@ -43,3 +44,8 @@ class EmailMessage(SQLModel, table=True):
     action_items: Optional[list[dict]] = Field(default=None, sa_column=Column(JSON))
     suggested_reply: Optional[str] = None
     reply_contains_commitment: Optional[bool] = None
+    attachments_json: str = Field(default="[]")
+    is_read: bool = Field(default=False)
+    is_archived: bool = Field(default=False)
+    is_deleted: bool = Field(default=False)
+    is_replied: bool = Field(default=False)

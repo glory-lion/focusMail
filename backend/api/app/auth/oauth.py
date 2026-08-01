@@ -17,7 +17,7 @@ SCOPES = [
 # /auth/login and /auth/callback, keyed by the random `state` value Google
 # round-trips back to us. Fine for a single-process dev server; a
 # multi-process deployment would need this shared somewhere durable instead.
-_pending_flows: dict[str, Flow] = {}
+_pending_flows: dict[str, tuple[Flow, bool]] = {}
 
 
 def _build_flow() -> Flow:
@@ -35,27 +35,28 @@ def _build_flow() -> Flow:
     return flow
 
 
-def build_login_url() -> str:
+def build_login_url(native: bool = False) -> str:
     flow = _build_flow()
     auth_url, state = flow.authorization_url(
         access_type="offline",
         include_granted_scopes="true",
         prompt="consent",
     )
-    _pending_flows[state] = flow
+    _pending_flows[state] = (flow, native)
     return auth_url
 
 
-def exchange_code_for_tokens(state: str, code: str) -> Credentials:
-    flow = _pending_flows.pop(state, None)
-    if flow is None:
+def exchange_code_for_tokens(state: str, code: str) -> tuple[Credentials, bool]:
+    pending = _pending_flows.pop(state, None)
+    if pending is None:
         raise ValueError(
             "No matching login attempt found for this state (it may have "
             "expired, or the server restarted mid-login). Start over at "
             "/auth/login."
         )
+    flow, native = pending
     flow.fetch_token(code=code)
-    return flow.credentials
+    return flow.credentials, native
 
 
 def get_profile_email(credentials: Credentials) -> str:

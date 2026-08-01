@@ -1,3 +1,4 @@
+import json
 
 from schema import StyleProfile
 from sqlmodel import Session, select
@@ -50,12 +51,16 @@ def _poll_user(session: Session, user: User) -> None:
             received_at=normalized.received_at,
             gmail_link=normalized.gmail_link,
             is_important=classification.is_important,
+            urgency_score=classification.urgency_score,
             summary_short=classification.summary_short,
             summary_detailed=classification.summary_detailed,
             deadline=classification.deadline,
             action_items=[item.model_dump(mode="json") for item in classification.action_items],
             suggested_reply=classification.suggested_reply,
             reply_contains_commitment=classification.reply_contains_commitment,
+            attachments_json=json.dumps(
+                [attachment.model_dump() for attachment in normalized.attachments]
+            ),
         )
         session.add(email)
         session.commit()

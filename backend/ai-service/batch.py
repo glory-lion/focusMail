@@ -10,6 +10,7 @@ onboarding backlog sweep; batch size is just how many items go in.
 
 import os
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 
 MAX_CONCURRENCY = int(os.environ.get("AI_SERVICE_MAX_CONCURRENCY", "10"))
 
@@ -53,6 +54,32 @@ def reply_draft_batch(emails: list[dict], style_profile: dict | None = None) -> 
     return [{"id": email["id"], **draft} for email, draft in zip(emails, drafts)]
 
 
+def _derive_urgency_score(email: dict, important: bool, deadline: str | None, action_items: list[dict]) -> int:
+    """Derived from signals already produced by classify.py/action_items.py
+    — not a separate model call. is_important stays the validated,
+    baseline-tested source of truth; this just gives the frontend a
+    sortable 0-100 number instead of the schema default of 0 (which would
+    otherwise make the real classifier look worse than the local mock
+    fallback in ai_client.py, which computes a real heuristic score)."""
+    if not important:
+        return 15
+
+    score = 70
+    if deadline:
+        score += 20
+        try:
+            deadline_dt = datetime.fromisoformat(deadline)
+            received_dt = datetime.fromisoformat(email["received_at"])
+            hours_until = (deadline_dt - received_dt).total_seconds() / 3600
+            if 0 <= hours_until <= 24:
+                score += 10
+        except (ValueError, KeyError):
+            pass
+    if action_items:
+        score += 5
+    return min(100, score)
+
+
 def process_email(email: dict, style_profile: dict | None = None) -> dict:
     """Runs all four extractions for one email concurrently (they're
     independent of each other), producing the full classify-batch result
@@ -77,6 +104,9 @@ def process_email(email: dict, style_profile: dict | None = None) -> dict:
     return {
         "id": email["id"],
         "important": important,
+        "urgencyScore": _derive_urgency_score(
+            email, important, deadline_items["deadline"], deadline_items["actionItems"]
+        ),
         "summaryShort": summary["summaryShort"],
         "summaryDetailed": summary["summaryDetailed"],
         "deadline": deadline_items["deadline"],

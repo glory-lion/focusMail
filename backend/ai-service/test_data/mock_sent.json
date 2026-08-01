@@ -1,0 +1,82 @@
+[
+  {
+    "gmail_id": "sent_20260720_a1b2c3",
+    "thread_id": "thread_20260720_aaa1",
+    "sender": "Me <me@example.com>",
+    "subject": "Confirming Tuesday's meeting",
+    "snippet": "Sounds good — I confirm our meeting on Tuesday at 10:00 AM in Conference Room B...",
+    "body": "Sounds good — I confirm our meeting on Tuesday at 10:00 AM in Conference Room B. I'll bring the updated slide deck and the latest traffic numbers so we can review the Q3 forecast and prioritize the open items.\n\nIf there's anything specific you want me to add, send it by end of day Monday and I'll include it. Otherwise, plan for a 45-minute review followed by 15 minutes for questions and next steps. Looking forward to a productive session.\n\nThanks,\nAlex",
+    "received_at": "2026-07-20T09:15:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260720_a1b2c3"
+  },
+  {
+    "gmail_id": "sent_20260722_d4e5f6",
+    "thread_id": "thread_20260722_bbb2",
+    "sender": "Me <me@example.com>",
+    "subject": "Re: Timeline and deliverables",
+    "snippet": "Thanks for the note. For the timeline, we can realistically deliver the first milestone by August...",
+    "body": "Thanks for the note. For the timeline, we can realistically deliver the first milestone by August 7 if we lock requirements this week and prioritize the backend integration tasks.\n\nMy suggestion is to freeze features A and B for that release and defer feature C to the next sprint. That reduces scope and keeps QA time predictable. I'll coordinate with Dev and QA to confirm capacity and will send an updated schedule by end of day tomorrow.\n\nIf that plan sounds good, I'll proceed. Thanks,\nAlex",
+    "received_at": "2026-07-22T11:40:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260722_d4e5f6"
+  },
+  {
+    "gmail_id": "sent_20260724_g7h8i9",
+    "thread_id": "thread_20260724_ccc3",
+    "sender": "Me <me@example.com>",
+    "subject": "Following up on Friday's action items",
+    "snippet": "Following up on the action items from Friday: I still need your final approval on the...",
+    "body": "Following up on the action items from Friday: I still need your final approval on the vendor contract and confirmation of the launch date. Without those, procurement and marketing can't finalize their schedules.\n\nIf you can review the redlines I sent and reply with a yes/no on the change to clause 4 by Wednesday, procurement will proceed. If you need a quick call to go through the edits, I can block 15 minutes tomorrow morning.\n\nAppreciate your help closing this out quickly.\n\nThanks,\nAlex",
+    "received_at": "2026-07-24T08:05:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260724_g7h8i9"
+  },
+  {
+    "gmail_id": "sent_20260725_j1k2l3",
+    "thread_id": "thread_20260725_ddd4",
+    "sender": "Me <me@example.com>",
+    "subject": "Re: Invitation to product launch",
+    "snippet": "Thanks so much for the invite — I won't be able to attend the launch in person due...",
+    "body": "Thanks so much for the invite — I won't be able to attend the launch in person due to travel the week before, unfortunately. I'm genuinely pleased for the team and wish I could be there to celebrate.\n\nIf there's a recording or highlights afterward, please send them along. I'd also be happy to join a brief virtual Q&A the following week if you want a quick remarks slot or to answer questions remotely.\n\nCongrats to everyone involved — this is a big milestone.\n\nThanks,\nAlex",
+    "received_at": "2026-07-25T17:30:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260725_j1k2l3"
+  },
+  {
+    "gmail_id": "sent_20260727_m4n5o6",
+    "thread_id": "thread_20260727_eee5",
+    "sender": "Me <me@example.com>",
+    "subject": "Files: Revised proposal and budget",
+    "snippet": "Attached are the two files you asked for: the revised proposal and the updated budget spreadsheet...",
+    "body": "Attached are the two files you asked for: the revised proposal and the updated budget spreadsheet with line-item notes. I incorporated the changes we discussed in Thursday's meeting and flagged the assumptions on page 3.\n\nA few quick notes: the vendor estimate is marked as provisional until we receive final quotes, and the contingency percentage is reflected in the last tab. If you want, I can walk through the budget on a quick call and explain the adjustments in detail.\n\nLet me know when you'd like to review.\n\nThanks,\nAlex",
+    "received_at": "2026-07-27T10:22:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260727_m4n5o6"
+  },
+  {
+    "gmail_id": "sent_20260728_p7q8r9",
+    "thread_id": "thread_20260728_fff6",
+    "sender": "Me <me@example.com>",
+    "subject": "Re: API behaviour question",
+    "snippet": "Quick answer: yes, the API supports batch writes but with three caveats you'll want to consider...",
+    "body": "Quick answer: yes, the API supports batch writes but with three caveats you'll want to consider. First, batches are limited to 500 records per request; second, partial failures return a mixed status, so you need retry logic; third, throughput is throttled under heavy load, which can increase latency.\n\nMy recommendation is to chunk large jobs into 300-record batches, implement exponential backoff for retries, and monitor the 429 responses. I can share a sample client snippet if you'd like — it handles chunking and retries automatically.\n\nThanks,\nAlex",
+    "received_at": "2026-07-28T14:55:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260728_p7q8r9"
+  },
+  {
+    "gmail_id": "sent_20260729_s0t1u2",
+    "thread_id": "thread_20260729_ggg7",
+    "sender": "Me <me@example.com>",
+    "subject": "Proposed times for our sync",
+    "snippet": "I'm free most afternoons next week — here are three slots that work for me: Tuesday 2:00–2:30...",
+    "body": "I'm free most afternoons next week — here are three slots that work for me: Tuesday 2:00–2:30 PM, Wednesday 3:30–4:00 PM, or Thursday 1:00–1:45 PM. Each one is short by design; we can extend if we need more time.\n\nPick the time that suits you and I'll send a calendar invite with a brief agenda. If none of these work, tell me two alternatives and I'll rearrange other commitments.\n\nLooking forward to catching up and aligning on priorities.\n\nThanks,\nAlex",
+    "received_at": "2026-07-29T09:08:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260729_s0t1u2"
+  },
+  {
+    "gmail_id": "sent_20260731_v3w4x5",
+    "thread_id": "thread_20260731_hhh8",
+    "sender": "Me <me@example.com>",
+    "subject": "Thanks — next steps",
+    "snippet": "Thanks for taking the time today. Great conversation, and I appreciate the clarity on responsibilities and timelines...",
+    "body": "Thanks for taking the time today. Great conversation, and I appreciate the clarity on responsibilities and timelines that came out of it. To recap: you'll handle vendor follow-up, I'll update the project plan, and we'll reconvene for a short status check in ten days.\n\nI'll circulate updated action items and a revised timeline by tomorrow morning so everyone has a single source of truth. If anything needs adjustment, flag it in that thread and we'll incorporate it before the status check.\n\nThanks,\nAlex",
+    "received_at": "2026-07-31T16:45:00-04:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#sent/sent_20260731_v3w4x5"
+  }
+]

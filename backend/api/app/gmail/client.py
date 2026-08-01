@@ -34,13 +34,15 @@ def _header(headers: list[dict], name: str) -> str:
     return ""
 
 
-def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail]:
-    """Fetch the most recent inbox messages for a user, newest first.
+def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[NormalizedEmail]:
+    """Shared by fetch_recent_emails (INBOX) and fetch_sent_emails (SENT).
 
-    Deliberately doesn't try to track 'since when' via Gmail's API itself —
-    the poller decides what's actually new by checking what's already in our
-    own database, which is simpler and avoids Gmail history-tracking edge
-    cases for a first version.
+    Uses format="full" (not "metadata") so `body` is populated — the
+    ai-service needs full body text for a real detailed summary,
+    deadline/action-item extraction, reply draft, or style-profile
+    extraction; snippet alone isn't enough for any of those. This doesn't
+    add extra API calls (one .get() per message either way), just a bigger
+    response per call.
     """
     credentials = _credentials_from_user(user)
     service = build("gmail", "v1", credentials=credentials)
@@ -48,7 +50,7 @@ def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEma
     listing = (
         service.users()
         .messages()
-        .list(userId="me", maxResults=max_results, labelIds=["INBOX"])
+        .list(userId="me", maxResults=max_results, labelIds=[label])
         .execute()
     )
     message_refs = listing.get("messages", [])
@@ -58,12 +60,7 @@ def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEma
         message = (
             service.users()
             .messages()
-            .get(
-                userId="me",
-                id=ref["id"],
-                format="metadata",
-                metadataHeaders=["From", "Subject", "Date"],
-            )
+            .get(userId="me", id=ref["id"], format="full")
             .execute()
         )
         headers = message["payload"]["headers"]
@@ -77,11 +74,30 @@ def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEma
                 sender=_header(headers, "From"),
                 subject=_header(headers, "Subject"),
                 snippet=message.get("snippet", ""),
+                body=_extract_body(message["payload"]),
                 received_at=received_at,
                 gmail_link=f"https://mail.google.com/mail/u/0/#inbox/{message['id']}",
             )
         )
     return emails
+
+
+def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail]:
+    """Fetch the most recent inbox messages for a user, newest first.
+
+    Deliberately doesn't try to track 'since when' via Gmail's API itself —
+    the poller decides what's actually new by checking what's already in our
+    own database, which is simpler and avoids Gmail history-tracking edge
+    cases for a first version.
+    """
+    return _fetch_emails_by_label(user, "INBOX", max_results)
+
+
+def fetch_sent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail]:
+    """Fetch the user's most recent sent messages, for style-profile
+    extraction at connect time. Called once per (new) user — see
+    auth/routes.py."""
+    return _fetch_emails_by_label(user, "SENT", max_results)
 
 
 def _extract_body(payload: dict) -> str:

@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
 
+from .. import ai_client
 from ..db import get_session
+from ..gmail import client as gmail_client
 from ..models import EmailMessage, User
 from . import oauth
 from .dependencies import get_current_user
@@ -31,6 +33,7 @@ def callback(code: str, state: str, session: Session = Depends(get_session)):
     email = oauth.get_profile_email(credentials)
 
     user = session.exec(select(User).where(User.email == email)).first()
+    is_new_user = user is None
     if user:
         user.refresh_token = credentials.refresh_token
     else:
@@ -38,6 +41,21 @@ def callback(code: str, state: str, session: Session = Depends(get_session)):
     session.add(user)
     session.commit()
     session.refresh(user)
+
+    if is_new_user:
+        # One-time, at connect: extract how this user writes so reply
+        # drafts sound like them. Best-effort — a failure here (Gmail
+        # hiccup, ai-service down) shouldn't block the connect flow itself;
+        # style_profile just stays None and classification falls back to a
+        # generic tone until this succeeds on a later connect.
+        try:
+            sent_emails = gmail_client.fetch_sent_emails(user)
+            profile = ai_client.build_style_profile(sent_emails)
+            user.style_profile = profile.model_dump(mode="json")
+            session.add(user)
+            session.commit()
+        except Exception:
+            pass
 
     return {
         "status": "connected",

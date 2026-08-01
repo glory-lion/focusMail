@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy import JSON, Column
 from sqlmodel import Field, SQLModel
 
 
@@ -17,6 +18,10 @@ class User(SQLModel, table=True):
     digest_minute: int = Field(default=0)
     push_token: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    # StyleProfile dict (see shared/schema.py), extracted once at connect
+    # time from the user's sent mail and cached here — never re-derived per
+    # classify-batch call. None until that one-time extraction has run.
+    style_profile: Optional[dict] = Field(default=None, sa_column=Column(JSON))
 
 
 class EmailMessage(SQLModel, table=True):
@@ -29,7 +34,12 @@ class EmailMessage(SQLModel, table=True):
     snippet: str
     received_at: datetime
     gmail_link: str
-    needs_action: Optional[bool] = None
-    has_deadline: Optional[bool] = None
     is_important: Optional[bool] = None
-    summary: Optional[str] = None
+    summary_short: Optional[str] = None
+    summary_detailed: Optional[str] = None
+    deadline: Optional[datetime] = None
+    # List of {"id": str, "text": str, "due_date": str | None} — see ActionItem in shared/schema.py.
+    # needs_action is derivable as bool(action_items), no separate column needed.
+    action_items: Optional[list[dict]] = Field(default=None, sa_column=Column(JSON))
+    suggested_reply: Optional[str] = None
+    reply_contains_commitment: Optional[bool] = None

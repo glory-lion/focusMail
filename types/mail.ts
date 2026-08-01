@@ -47,6 +47,7 @@ export interface Email {
   attachments: Attachment[];
   archived: boolean;
   deleted: boolean;
+  replied: boolean;
 }
 
 export interface NotificationSettings {

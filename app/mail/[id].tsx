@@ -1,11 +1,22 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Keyboard,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AttachmentCard } from '@/components/mail/attachment-card';
 import { ImportantTag } from '@/components/mail/important-tag';
 import { SummaryBadge } from '@/components/mail/summary-badge';
+import { ProfileAvatar } from '@/components/settings/profile-avatar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -15,31 +26,54 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getEmailById, markAsRead, sendReply, setArchived, setDeleted } from '@/services/mailService';
 import type { Email } from '@/types/mail';
 
-function formatFullTimestamp(iso: string): string {
-  return new Date(iso).toLocaleString([], {
-    weekday: 'long',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+function formatShortTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+function formatFullDate(iso: string): string {
+  return new Date(iso).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
 export default function EmailDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme() ?? 'light';
   const insets = useSafeAreaInsets();
-  const { height: windowHeight } = useWindowDimensions();
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const [email, setEmail] = useState<Email | undefined | null>(null);
   const [replyText, setReplyText] = useState('');
   const [replyAttachments, setReplyAttachments] = useState<string[]>([]);
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [showSenderEmail, setShowSenderEmail] = useState(false);
   const shiftAnim = useRef(new Animated.Value(0)).current;
+  const replyInputRef = useRef<TextInput>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const expandForKeyboard = useCallback(() => {
+    Animated.timing(shiftAnim, { toValue: windowHeight * 0.5, duration: 220, useNativeDriver: false }).start();
+    requestAnimationFrame(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    });
+  }, [shiftAnim, windowHeight]);
+
+  const collapseForKeyboard = useCallback(() => {
+    Animated.timing(shiftAnim, { toValue: 0, duration: 220, useNativeDriver: false }).start();
+  }, [shiftAnim]);
 
   useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', expandForKeyboard);
+    const hideSub = Keyboard.addListener('keyboardDidHide', collapseForKeyboard);
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [expandForKeyboard, collapseForKeyboard]);
+
+  useEffect(() => {
+    setShowSenderEmail(false);
     getEmailById(id).then((result) => {
       setEmail(result ?? undefined);
       setReplyText(result?.suggestedReply ?? '');
+      setSendState(result?.replied ? 'sent' : 'idle');
       if (result && !result.read) {
         markAsRead(result.id);
       }
@@ -71,9 +105,13 @@ export default function EmailDetailScreen() {
     (detailedSummary.deadlines && detailedSummary.deadlines.length > 0);
 
   const handleSend = async () => {
+    replyInputRef.current?.blur();
+    Keyboard.dismiss();
+    collapseForKeyboard();
     setSendState('sending');
     await sendReply(email.id, replyText);
     setSendState('sent');
+    setEmail((prev) => (prev ? { ...prev, replied: true } : prev));
   };
 
   const handleToggleArchive = async () => {
@@ -96,14 +134,6 @@ export default function EmailDetailScreen() {
     setReplyAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleReplyFocus = () => {
-    Animated.timing(shiftAnim, { toValue: -windowHeight * 0.5, duration: 220, useNativeDriver: true }).start();
-  };
-
-  const handleReplyBlur = () => {
-    Animated.timing(shiftAnim, { toValue: 0, duration: 220, useNativeDriver: true }).start();
-  };
-
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.topBar}>
@@ -113,8 +143,8 @@ export default function EmailDetailScreen() {
         </Pressable>
         <View style={styles.actionsRow}>
           <Pressable onPress={handleToggleArchive} hitSlop={8} style={styles.actionButton}>
-            <IconSymbol
-              name={email.archived ? 'tray.and.arrow.up.fill' : 'archivebox'}
+            <MaterialCommunityIcons
+              name={email.archived ? 'archive-arrow-up' : 'archive-arrow-up-outline'}
               size={20}
               color={Colors[colorScheme].icon}
             />
@@ -130,26 +160,60 @@ export default function EmailDetailScreen() {
       </View>
 
       <Animated.ScrollView
+        ref={scrollViewRef}
         contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-        style={{ transform: [{ translateY: shiftAnim }] }}>
+        keyboardShouldPersistTaps="handled">
         <View style={styles.headerBlock}>
           <View style={styles.senderRow}>
-            <ThemedText type="defaultSemiBold" style={styles.senderName}>
-              {email.sender.name}
-            </ThemedText>
-            <ThemedText style={[styles.time, { color: Colors[colorScheme].icon }]}>
-              {formatFullTimestamp(email.timestamp)}
-            </ThemedText>
+            <View style={styles.senderInfo}>
+              <ProfileAvatar name={email.sender.name} size={44} />
+              <View style={styles.senderTextColumn}>
+                <Pressable
+                  onPress={() => setShowSenderEmail((v) => !v)}
+                  hitSlop={6}
+                  style={styles.senderNameRow}>
+                  <ThemedText type="defaultSemiBold" style={styles.senderName}>
+                    {email.sender.name}
+                  </ThemedText>
+                  <IconSymbol
+                    name={showSenderEmail ? 'chevron.up' : 'chevron.down'}
+                    size={16}
+                    color={Colors[colorScheme].icon}
+                    style={styles.senderChevron}
+                  />
+                </Pressable>
+                <ThemedText style={[styles.senderDateTime, { color: Colors[colorScheme].icon }]}>
+                  {formatFullDate(email.timestamp)} · {formatShortTime(email.timestamp)}
+                </ThemedText>
+              </View>
+            </View>
+            <Pressable style={[styles.openInGmailButton, { borderColor: Colors[colorScheme].border, backgroundColor: Colors[colorScheme].card }]}>
+              <IconSymbol name="arrow.up.right.square" size={13} color={Colors[colorScheme].text} />
+              <ThemedText type="defaultSemiBold" style={styles.openInGmailText}>
+                Open in Gmail
+              </ThemedText>
+            </Pressable>
           </View>
-          <ThemedText style={[styles.senderEmail, { color: Colors[colorScheme].icon }]}>
-            {email.sender.email}
-          </ThemedText>
+          {showSenderEmail ? (
+            <ThemedText
+              numberOfLines={1}
+              style={[
+                styles.senderEmailReveal,
+                {
+                  maxWidth: windowWidth - 60,
+                  color: Colors[colorScheme].text,
+                  backgroundColor: Colors[colorScheme].card,
+                  borderColor: Colors[colorScheme].border,
+                },
+              ]}>
+              {email.sender.email}
+            </ThemedText>
+          ) : null}
           <View style={styles.subjectRow}>
             <ThemedText type="title" style={styles.subject}>
               {email.subject}
             </ThemedText>
-            <ImportantTag important={email.important} />
+            <ImportantTag important={email.important} size="md" />
           </View>
         </View>
 
@@ -190,10 +254,11 @@ export default function EmailDetailScreen() {
             Suggested reply
           </ThemedText>
           <TextInput
+            ref={replyInputRef}
             value={replyText}
             onChangeText={setReplyText}
-            onFocus={handleReplyFocus}
-            onBlur={handleReplyBlur}
+            onFocus={expandForKeyboard}
+            onBlur={collapseForKeyboard}
             multiline
             placeholder="Write a reply…"
             placeholderTextColor={Colors[colorScheme].icon}
@@ -248,6 +313,8 @@ export default function EmailDetailScreen() {
             </ThemedText>
           </Pressable>
         </View>
+
+        <Animated.View style={{ height: shiftAnim }} />
       </Animated.ScrollView>
     </ThemedView>
   );
@@ -299,21 +366,57 @@ const styles = StyleSheet.create({
   },
   headerBlock: {
     gap: 6,
+    position: 'relative',
   },
   senderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  senderInfo: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    flexShrink: 1,
+  },
+  senderTextColumn: {
+    flexShrink: 1,
+    gap: 2,
+  },
+  senderNameRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 4,
   },
   senderName: {
-    fontSize: 15,
+    flexShrink: 1,
+    fontSize: 18,
   },
-  senderEmail: {
-    fontSize: 12,
+  senderChevron: {
+    flexShrink: 0,
+    marginTop: 3,
   },
-  time: {
+  senderDateTime: {
     fontFamily: Fonts.bold,
     fontSize: 12,
+  },
+  senderEmailReveal: {
+    position: 'absolute',
+    top: 46,
+    left: 56,
+    zIndex: 20,
+    fontSize: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 6,
   },
   subjectRow: {
     flexDirection: 'row',
@@ -325,6 +428,18 @@ const styles = StyleSheet.create({
   subject: {
     flex: 1,
     fontSize: 21,
+  },
+  openInGmailButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  openInGmailText: {
+    fontSize: 12,
   },
   detailsBlock: {
     borderWidth: 1,

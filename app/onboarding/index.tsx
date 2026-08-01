@@ -63,13 +63,13 @@ export default function ConnectAccountScreen() {
               provider="outlook"
               title="Connect Outlook"
               subtitle="Preferred for corporate enterprise"
-              onPress={() => handleConnect('outlook')}
+              disabled
               trailing={
-                account?.provider === 'outlook' && account.connected ? (
-                  <IconSymbol name="checkmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
-                ) : (
-                  <IconSymbol name="chevron.right" size={20} color={Colors[colorScheme].icon} />
-                )
+                <View style={[styles.comingSoonPill, { backgroundColor: Colors[colorScheme].border }]}>
+                  <ThemedText style={[styles.comingSoonText, { color: Colors[colorScheme].icon }]}>
+                    Coming soon
+                  </ThemedText>
+                </View>
               }
             />
           </View>
@@ -152,6 +152,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     paddingHorizontal: 16,
+  },
+  comingSoonPill: {
+    borderRadius: 999,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  comingSoonText: {
+    fontSize: 11,
   },
   noticeBox: {
     flexDirection: 'row',

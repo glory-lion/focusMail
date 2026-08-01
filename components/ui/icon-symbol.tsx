@@ -47,6 +47,7 @@ const MAPPING = {
   'trash.slash': 'restore-from-trash',
   'ellipsis': 'more-vert',
   'envelope.badge': 'mark-email-unread',
+  'arrow.up.right.square': 'open-in-new',
 } as IconMapping;
 
 /**

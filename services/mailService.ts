@@ -17,7 +17,11 @@ export function getEmailById(id: string): Promise<Email | undefined> {
   return delay(mockEmails.find((email) => email.id === id));
 }
 
-export function sendReply(_id: string, _text: string): Promise<void> {
+export function sendReply(id: string, _text: string): Promise<void> {
+  const email = mockEmails.find((item) => item.id === id);
+  if (email) {
+    email.replied = true;
+  }
   return delay(undefined);
 }
 

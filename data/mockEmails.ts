@@ -418,5 +418,6 @@ export const mockEmails: Email[] = seeds.map((seed) => {
     attachments: seed.attachments ?? [],
     archived: false,
     deleted: false,
+    replied: false,
   };
 });

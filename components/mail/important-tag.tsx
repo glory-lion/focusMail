@@ -5,20 +5,22 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors, Palette } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export function ImportantTag({ important }: { important: boolean }) {
+export function ImportantTag({ important, size = 'sm' }: { important: boolean; size?: 'sm' | 'md' }) {
   const colorScheme = useColorScheme() ?? 'light';
   const red = Palette.importantRed;
+  const isMd = size === 'md';
 
   return (
     <ThemedView
       style={[
         styles.tag,
+        isMd && styles.tagMd,
         important
           ? { backgroundColor: colorScheme === 'dark' ? 'rgba(239,68,68,0.18)' : `${red}1A`, borderColor: red }
           : { backgroundColor: 'transparent', borderColor: Colors[colorScheme].icon },
       ]}>
       <ThemedText
-        style={[styles.label, { color: important ? red : Colors[colorScheme].icon }]}
+        style={[styles.label, isMd && styles.labelMd, { color: important ? red : Colors[colorScheme].icon }]}
         type="defaultSemiBold">
         {important ? 'Important' : 'Unimportant'}
       </ThemedText>
@@ -34,8 +36,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
+  tagMd: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
   label: {
     fontSize: 10,
     lineHeight: 14,
+  },
+  labelMd: {
+    fontSize: 12,
+    lineHeight: 16,
   },
 });

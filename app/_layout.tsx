@@ -37,6 +37,7 @@ function RootNavigator() {
         <Stack.Screen name="mail/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ presentation: 'card' }} />
       </Stack.Protected>
+      <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
     </Stack>
   );
 }

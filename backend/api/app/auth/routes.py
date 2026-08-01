@@ -20,6 +20,10 @@ router = APIRouter()
 _native_exchange_codes: dict[str, tuple[str, float]] = {}
 
 
+def _frontend_redirect(**params: str) -> RedirectResponse:
+    return RedirectResponse(f"{settings.frontend_url}/auth/callback?{urlencode(params)}")
+
+
 @router.get("/auth/login")
 def login(platform: Literal["web", "native"] = "web"):
     return RedirectResponse(oauth.build_login_url(native=platform == "native"))
@@ -32,14 +36,13 @@ def callback(code: str, state: str, session: Session = Depends(get_session)):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     if not credentials.refresh_token:
-        raise HTTPException(
-            status_code=400,
-            detail=(
+        return _frontend_redirect(
+            error=(
                 "Google didn't return a refresh token. This usually happens "
                 "if you'd already approved this app before. Revoke access at "
-                "https://myaccount.google.com/permissions and try "
-                "/auth/login again."
-            ),
+                "https://myaccount.google.com/permissions and try connecting "
+                "again."
+            )
         )
     email = oauth.get_profile_email(credentials)
 
@@ -68,17 +71,12 @@ def callback(code: str, state: str, session: Session = Depends(get_session)):
         except Exception:
             pass
 
-    result = {
-        "status": "connected",
-        "email": user.email,
-        "session_token": user.session_token,
-    }
     if native:
         exchange_code = secrets.token_urlsafe(32)
         _native_exchange_codes[exchange_code] = (user.session_token, time.time() + 300)
         query = urlencode({"code": exchange_code})
         return RedirectResponse(f"{settings.app_redirect_uri}?{query}")
-    return result
+    return _frontend_redirect(token=user.session_token, email=user.email)
 
 
 class NativeExchangeRequest(BaseModel):

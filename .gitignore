@@ -12,6 +12,7 @@ __pycache__/
 # Editor / OS
 .vscode/
 .DS_Store
+
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
@@ -41,7 +42,6 @@ yarn-debug.*
 yarn-error.*
 
 # macOS
-.DS_Store
 *.pem
 
 # local env files
@@ -55,3 +55,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Handoff
+HANDOFF.md

@@ -1,62 +1,139 @@
-import { mockEmails } from '@/data/mockEmails';
-import type { DayBucket, Email, WeeklyInsightsStats } from '@/types/mail';
+import { apiFetch, ApiError } from '@/services/apiClient';
+import { getAllOverlay, getOverlay, setOverlay } from '@/services/emailOverlay';
+import type { DayBucket, Email, EmailSender, WeeklyInsightsStats } from '@/types/mail';
 
-const CRITICAL_URGENCY_THRESHOLD = 90;
+const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const SIMULATED_DELAY_MS = 300;
+function dayBucketFor(date: Date): DayBucket {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((startOfToday.getTime() - startOfDate.getTime()) / 86400000);
 
-function delay<T>(value: T): Promise<T> {
-  return new Promise((resolve) => setTimeout(() => resolve(value), SIMULATED_DELAY_MS));
+  if (diffDays === 0) return 'TODAY';
+  if (diffDays === 1) return 'YESTERDAY';
+  return WEEKDAY_NAMES[date.getDay()];
 }
 
-export function getEmails(): Promise<Email[]> {
-  return delay(mockEmails.map((email) => ({ ...email })));
-}
-
-export function getEmailById(id: string): Promise<Email | undefined> {
-  return delay(mockEmails.find((email) => email.id === id));
-}
-
-export function sendReply(id: string, _text: string): Promise<void> {
-  const email = mockEmails.find((item) => item.id === id);
-  if (email) {
-    email.replied = true;
+function parseSender(raw: string): EmailSender {
+  // "From" header, typically `Name <email@domain.com>` or just an address.
+  const match = raw.match(/^(.*?)\s*<([^>]+)>\s*$/);
+  if (match) {
+    const name = match[1].replace(/^"|"$/g, '').trim();
+    return { name: name || match[2], email: match[2] };
   }
-  return delay(undefined);
+  return { name: raw, email: raw };
 }
 
-export function markAsRead(id: string): Promise<void> {
-  const email = mockEmails.find((item) => item.id === id);
-  if (email) {
-    email.read = true;
-  }
-  return delay(undefined);
+// --- backend/api response shapes (see backend/api/app/routes/emails.py and shared/schema.py) ---
+
+interface ApiActionItem {
+  id: string;
+  text: string;
+  due_date: string | null;
 }
 
-export function markAsUnread(id: string): Promise<void> {
-  const email = mockEmails.find((item) => item.id === id);
-  if (email) {
-    email.read = false;
-  }
-  return delay(undefined);
+interface ApiClassification {
+  is_important: boolean;
+  summary_short: string;
+  summary_detailed: string;
+  deadline: string | null;
+  action_items: ApiActionItem[];
+  suggested_reply: string;
+  reply_contains_commitment: boolean;
 }
 
-export function setArchived(id: string, archived: boolean): Promise<void> {
-  const email = mockEmails.find((item) => item.id === id);
-  if (email) {
-    email.archived = archived;
-    if (archived) email.deleted = false;
-  }
-  return delay(undefined);
+interface ApiEmail {
+  id: number;
+  gmail_id: string;
+  thread_id: string;
+  sender: string;
+  subject: string;
+  snippet: string;
+  received_at: string;
+  gmail_link: string;
+  classification: ApiClassification | null;
+  body?: string | null;
 }
 
-export function setDeleted(id: string, deleted: boolean): Promise<void> {
-  const email = mockEmails.find((item) => item.id === id);
-  if (email) {
-    email.deleted = deleted;
-    if (deleted) email.archived = false;
+interface ApiDayGroup {
+  date: string;
+  emails: ApiEmail[];
+}
+
+function mapApiEmail(api: ApiEmail, overlay: { read?: boolean; archived?: boolean; deleted?: boolean; replied?: boolean }): Email {
+  const classification = api.classification;
+  const deadlines = classification?.deadline ? [new Date(classification.deadline).toLocaleString()] : [];
+  const keyPoints = [
+    classification?.summary_detailed,
+    ...(classification?.action_items.map((item) => item.text) ?? []),
+  ].filter((v): v is string => Boolean(v));
+
+  return {
+    id: String(api.id),
+    sender: parseSender(api.sender),
+    subject: api.subject,
+    preview: api.snippet,
+    body: api.body ?? '',
+    timestamp: api.received_at,
+    dayBucket: dayBucketFor(new Date(api.received_at)),
+    important: classification?.is_important ?? false,
+    // The backend only classifies importance as a boolean — there's no
+    // numeric urgency score. Kept as a 0/1 sort key (not a real "score")
+    // purely so important mail floats to the top of each day's list.
+    urgencyScore: classification?.is_important ? 1 : 0,
+    summary: classification?.summary_short ?? api.snippet,
+    detailedSummary: {
+      deadlines,
+      keyPoints: keyPoints.length > 0 ? keyPoints : [api.snippet],
+    },
+    suggestedReply: classification?.suggested_reply ?? '',
+    // Not tracked by the backend yet — see services/emailOverlay.ts.
+    read: overlay.read ?? true,
+    hasAttachment: false,
+    attachments: [],
+    archived: overlay.archived ?? false,
+    deleted: overlay.deleted ?? false,
+    replied: overlay.replied ?? false,
+  };
+}
+
+export async function getEmails(): Promise<Email[]> {
+  const groups = await apiFetch<ApiDayGroup[]>('/emails');
+  const overlay = await getAllOverlay();
+  return groups.flatMap((group) => group.emails.map((email) => mapApiEmail(email, overlay[String(email.id)] ?? {})));
+}
+
+export async function getEmailById(id: string): Promise<Email | undefined> {
+  try {
+    const api = await apiFetch<ApiEmail>(`/emails/${id}`);
+    const overlay = await getOverlay(id);
+    return mapApiEmail(api, overlay);
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return undefined;
+    throw err;
   }
-  return delay(undefined);
+}
+
+export async function sendReply(id: string, text: string): Promise<void> {
+  await apiFetch(`/emails/${id}/send`, { method: 'POST', body: JSON.stringify({ body: text }) });
+  await setOverlay(id, { replied: true });
+}
+
+export async function markAsRead(id: string): Promise<void> {
+  await setOverlay(id, { read: true });
+}
+
+export async function markAsUnread(id: string): Promise<void> {
+  await setOverlay(id, { read: false });
+}
+
+export async function setArchived(id: string, archived: boolean): Promise<void> {
+  await setOverlay(id, archived ? { archived: true, deleted: false } : { archived: false });
+}
+
+export async function setDeleted(id: string, deleted: boolean): Promise<void> {
+  await setOverlay(id, deleted ? { deleted: true, archived: false } : { deleted: false });
 }
 
 export interface EmailSection {
@@ -120,9 +197,13 @@ export function filterEmails(emails: Email[], filter: EmailFilter): Email[] {
 }
 
 export function getWeeklyStats(emails: Email[]): WeeklyInsightsStats {
-  const critical = emails.filter((email) => email.urgencyScore >= CRITICAL_URGENCY_THRESHOLD).length;
+  // "Critical" = important AND has an actual deadline attached — the only
+  // two real signals the backend gives us, no fabricated scoring involved.
+  const critical = emails.filter(
+    (email) => email.important && (email.detailedSummary.deadlines?.length ?? 0) > 0
+  ).length;
   const needAction = emails.filter(
-    (email) => email.important && email.urgencyScore < CRITICAL_URGENCY_THRESHOLD
+    (email) => email.important && (email.detailedSummary.deadlines?.length ?? 0) === 0
   ).length;
   const unread = emails.filter((email) => !email.read).length;
 

@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,16 +8,12 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import type { Provider } from '@/types/mail';
+import { startGoogleOAuth } from '@/services/accountService';
 
 export default function ConnectAccountScreen() {
   const { account } = useAppState();
   const colorScheme = useColorScheme() ?? 'light';
   const insets = useSafeAreaInsets();
-
-  const handleConnect = (provider: Provider) => {
-    router.push({ pathname: '/onboarding/loading', params: { provider } });
-  };
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
@@ -48,7 +43,7 @@ export default function ConnectAccountScreen() {
               provider="gmail"
               title="Connect Gmail"
               subtitle="Recommended for individuals"
-              onPress={() => handleConnect('gmail')}
+              onPress={startGoogleOAuth}
               trailing={
                 account?.provider === 'gmail' && account.connected ? (
                   <IconSymbol name="checkmark.circle.fill" size={20} color={Colors[colorScheme].tint} />

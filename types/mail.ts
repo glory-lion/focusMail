@@ -37,6 +37,7 @@ export interface Email {
   body: string;
   timestamp: string;
   dayBucket: DayBucket;
+  gmailLink: string;
   important: boolean;
   urgencyScore: number;
   summary: string;

@@ -33,6 +33,16 @@ def _poll_user(session: Session, user: User) -> None:
     if not new_emails:
         return
 
+    # If this user has no stored emails yet, this is the initial backlog
+    # sweep at connect time — classify and store everything normally, but
+    # don't fire a flood of "Immediate" notifications for a week's worth of
+    # mail the user has already seen in Gmail. Notifications start from the
+    # next poll cycle onward, for genuinely new mail. Checked once here,
+    # before this batch adds any rows, so it reflects state prior to this poll.
+    is_backlog_sweep = (
+        session.exec(select(EmailMessage).where(EmailMessage.user_id == user.id)).first() is None
+    )
+
     style_profile = StyleProfile(**user.style_profile) if user.style_profile else None
 
     # One call for every new email this poll found — whether that's 1 or
@@ -65,5 +75,9 @@ def _poll_user(session: Session, user: User) -> None:
         session.add(email)
         session.commit()
 
-        if classification.is_important and user.notification_preference == "immediate":
+        if (
+            not is_backlog_sweep
+            and classification.is_important
+            and user.notification_preference == "immediate"
+        ):
             sender.send_immediate_notification(user, email)

@@ -1,6 +1,8 @@
 import base64
 from datetime import datetime, timezone
 from email.mime.text import MIMEText
+from html import unescape
+from html.parser import HTMLParser
 
 # We store and compare all timestamps as naive UTC (no attached tzinfo)
 # because SQLite silently strips timezone info on read-back — mixing naive
@@ -53,7 +55,9 @@ def _extract_attachments(payload: dict) -> list[Attachment]:
     return attachments
 
 
-def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[NormalizedEmail]:
+def _fetch_emails_by_label(
+    user: User, label: str, max_results: int, query: str | None = None
+) -> list[NormalizedEmail]:
     """Shared by fetch_recent_emails (INBOX) and fetch_sent_emails (SENT).
 
     Uses format="full" (not "metadata") so `body` is populated — the
@@ -63,16 +67,20 @@ def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[Nor
     add extra API calls (one .get() per message either way), just a bigger
     response per call. The MIME part tree in the "full" response is also
     what attachment metadata is extracted from below.
+
+    `query` is a Gmail search query (e.g. "newer_than:7d") applied at the
+    API level, so old mail is never fetched/stored in the first place —
+    the daily discard job only cleans up what's already stored, it can't
+    undo already having pulled in older content.
     """
     credentials = _credentials_from_user(user)
     service = build("gmail", "v1", credentials=credentials)
 
-    listing = (
-        service.users()
-        .messages()
-        .list(userId="me", maxResults=max_results, labelIds=[label])
-        .execute()
-    )
+    list_kwargs = {"userId": "me", "maxResults": max_results, "labelIds": [label]}
+    if query:
+        list_kwargs["q"] = query
+
+    listing = service.users().messages().list(**list_kwargs).execute()
     message_refs = listing.get("messages", [])
 
     emails: list[NormalizedEmail] = []
@@ -106,12 +114,19 @@ def _fetch_emails_by_label(user: User, label: str, max_results: int) -> list[Nor
 def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail]:
     """Fetch the most recent inbox messages for a user, newest first.
 
+    Restricted to the retention window (settings.retention_days) at the
+    Gmail query level — otherwise a low-volume inbox would reach arbitrarily
+    far back to fill max_results, briefly storing content older than the
+    retention policy promises until the next daily discard run catches it.
+
     Deliberately doesn't try to track 'since when' via Gmail's API itself —
     the poller decides what's actually new by checking what's already in our
     own database, which is simpler and avoids Gmail history-tracking edge
     cases for a first version.
     """
-    return _fetch_emails_by_label(user, "INBOX", max_results)
+    return _fetch_emails_by_label(
+        user, "INBOX", max_results, query=f"newer_than:{settings.retention_days}d"
+    )
 
 
 def fetch_sent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail]:
@@ -121,26 +136,72 @@ def fetch_sent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail
     return _fetch_emails_by_label(user, "SENT", max_results)
 
 
-def _extract_body(payload: dict) -> str:
-    """Gmail messages are MIME, often multiple nested parts (plain text,
-    HTML, attachments). Walk the tree looking for text/plain; if none
-    exists anywhere, fall back to raw text/html rather than showing nothing.
-    """
-    if payload.get("mimeType") == "text/plain":
+def _find_mime_part(payload: dict, mime_type: str) -> str:
+    """Depth-first search for a part with this exact mimeType (including
+    the payload itself, for single-part messages with no `parts` list),
+    returning its decoded raw content, or "" if not found."""
+    if payload.get("mimeType") == mime_type:
         data = payload.get("body", {}).get("data")
         if data:
             return base64.urlsafe_b64decode(data).decode("utf-8", errors="replace")
-
-    html_fallback = ""
     for part in payload.get("parts", []):
-        text = _extract_body(part)
-        if not text:
-            continue
-        if part.get("mimeType") == "text/html":
-            html_fallback = html_fallback or text
-        else:
+        text = _find_mime_part(part, mime_type)
+        if text:
             return text
-    return html_fallback
+    return ""
+
+
+def _extract_body(payload: dict) -> str:
+    """Gmail messages are MIME, often multiple nested parts (plain text,
+    HTML, attachments). Prefers HTML — converted to clean visible text via
+    _html_to_text — over the sender's text/plain part: many senders'
+    auto-generated plain-text fallbacks are lower quality (raw tracking
+    URLs, "[image: Logo]" placeholders) than what we get by properly
+    parsing their actual HTML ourselves. Falls back to text/plain only if
+    no HTML part exists anywhere (including the payload's own top-level
+    content type, for single-part HTML messages with no `parts` list).
+    """
+    html_content = _find_mime_part(payload, "text/html")
+    if html_content:
+        return _html_to_text(html_content)
+    return _find_mime_part(payload, "text/plain")
+
+
+class _BodyTextExtractor(HTMLParser):
+    """Extracts visible text from HTML, skipping <script>/<style> content
+    and all tag attributes (so href/src/tracking-link URLs never leak into
+    the extracted text — only text actually rendered to the reader)."""
+
+    _BLOCK_TAGS = {"br", "p", "div", "tr", "li", "h1", "h2", "h3", "h4", "h5", "h6"}
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._chunks: list[str] = []
+        self._skip_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in ("script", "style"):
+            self._skip_depth += 1
+        elif tag in self._BLOCK_TAGS:
+            self._chunks.append("\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in ("script", "style") and self._skip_depth > 0:
+            self._skip_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self._skip_depth == 0 and data.strip():
+            self._chunks.append(data)
+
+    def text(self) -> str:
+        lines = [line.strip() for line in "".join(self._chunks).splitlines()]
+        return "\n".join(line for line in lines if line)
+
+
+def _html_to_text(html_content: str) -> str:
+    parser = _BodyTextExtractor()
+    parser.feed(html_content)
+    return unescape(parser.text())
 
 
 def fetch_body(user: User, gmail_id: str) -> str:

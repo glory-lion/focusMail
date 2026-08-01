@@ -21,6 +21,10 @@ class Settings:
     # session token attached as a query param. Points at the Expo web dev
     # server by default.
     frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:8081")
+    # Single source of truth for the retention window — used both to filter
+    # what gets fetched from Gmail in the first place (gmail/client.py) and
+    # to purge anything already stored past this age (notifications/scheduler.py).
+    retention_days: int = int(os.getenv("RETENTION_DAYS", "7"))
 
 
 settings = Settings()

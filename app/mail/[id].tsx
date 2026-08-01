@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Keyboard,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -187,7 +188,9 @@ export default function EmailDetailScreen() {
                 </ThemedText>
               </View>
             </View>
-            <Pressable style={[styles.openInGmailButton, { borderColor: Colors[colorScheme].border, backgroundColor: Colors[colorScheme].card }]}>
+            <Pressable
+              onPress={() => Linking.openURL(email.gmailLink)}
+              style={[styles.openInGmailButton, { borderColor: Colors[colorScheme].border, backgroundColor: Colors[colorScheme].card }]}>
               <IconSymbol name="arrow.up.right.square" size={13} color={Colors[colorScheme].text} />
               <ThemedText type="defaultSemiBold" style={styles.openInGmailText}>
                 Open in Gmail

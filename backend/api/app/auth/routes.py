@@ -17,7 +17,7 @@ from . import oauth
 from .dependencies import get_current_user
 
 router = APIRouter()
-_native_exchange_codes: dict[str, tuple[str, float]] = {}
+_native_exchange_codes: dict[str, tuple[str, str, float]] = {}
 
 
 def _frontend_redirect(**params: str) -> RedirectResponse:
@@ -73,7 +73,7 @@ def callback(code: str, state: str, session: Session = Depends(get_session)):
 
     if native:
         exchange_code = secrets.token_urlsafe(32)
-        _native_exchange_codes[exchange_code] = (user.session_token, time.time() + 300)
+        _native_exchange_codes[exchange_code] = (user.session_token, user.email, time.time() + 300)
         query = urlencode({"code": exchange_code})
         return RedirectResponse(f"{settings.app_redirect_uri}?{query}")
     return _frontend_redirect(token=user.session_token, email=user.email)
@@ -86,9 +86,10 @@ class NativeExchangeRequest(BaseModel):
 @router.post("/auth/native/exchange")
 def exchange_native_code(payload: NativeExchangeRequest):
     pending = _native_exchange_codes.pop(payload.code, None)
-    if pending is None or pending[1] < time.time():
+    if pending is None or pending[2] < time.time():
         raise HTTPException(status_code=400, detail="Invalid or expired exchange code")
-    return {"session_token": pending[0]}
+    session_token, email, _expires_at = pending
+    return {"session_token": session_token, "email": email}
 
 
 @router.delete("/account")

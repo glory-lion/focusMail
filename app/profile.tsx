@@ -52,7 +52,8 @@ export default function ProfileScreen() {
             textAlign="center"
           />
           <ThemedText style={[styles.subtitle, { color: Colors[colorScheme].icon }]}>
-            {profile.title} · {profile.email}
+            {profile.title ? `${profile.title} · ` : ''}
+            {profile.email}
           </ThemedText>
         </View>
 

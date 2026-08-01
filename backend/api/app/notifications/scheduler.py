@@ -4,12 +4,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from sqlmodel import Session, select
 
+from ..config import settings
 from ..db import engine
 from ..gmail.poller import poll_all_users
 from ..models import EmailMessage, User
 from . import sender
 
-RETENTION_DAYS = 7
 POLL_INTERVAL_SECONDS = 75
 
 scheduler = BackgroundScheduler()
@@ -20,7 +20,7 @@ def _utc_now() -> datetime:
 
 
 def discard_old_emails() -> None:
-    cutoff = _utc_now() - timedelta(days=RETENTION_DAYS)
+    cutoff = _utc_now() - timedelta(days=settings.retention_days)
     with Session(engine) as session:
         old_emails = session.exec(
             select(EmailMessage).where(EmailMessage.received_at < cutoff)

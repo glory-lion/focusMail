@@ -408,6 +408,7 @@ export const mockEmails: Email[] = seeds.map((seed) => {
     body: seed.body,
     timestamp: iso,
     dayBucket: dayBucketFor(date),
+    gmailLink: `https://mail.google.com/mail/u/0/#inbox/${seed.id}`,
     important: seed.important,
     urgencyScore: seed.urgencyScore,
     summary: seed.summary,

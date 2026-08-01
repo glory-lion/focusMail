@@ -9,6 +9,17 @@ import type { Account, NotificationSettings, Provider, UserProfile } from '@/typ
 
 const STORAGE_KEY = 'focus-mail-app/state';
 
+// Google doesn't give us a display name from the scopes we request (Gmail
+// API's own profile endpoint only returns the email address) — derive
+// something reasonable from the local part rather than showing a
+// leftover placeholder name that belongs to nobody using this session.
+function deriveNameFromEmail(email: string): string {
+  const local = email.split('@')[0] ?? email;
+  const cleaned = local.replace(/[0-9]+$/, '').replace(/[._-]+/g, ' ').trim();
+  const words = (cleaned || local).split(' ').filter(Boolean);
+  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
 interface PersistedState {
   account: Account | null;
   notificationSettings: NotificationSettings;
@@ -85,6 +96,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setGoogleAccount: async (email: string, token: string) => {
         await setSessionToken(token);
         setAccount({ provider: 'gmail', connected: true, emailAddress: email });
+        setProfile((prev) => ({ ...prev, email, name: deriveNameFromEmail(email) }));
       },
       updateNotificationSettings: (partial) =>
         setNotificationSettings((prev) => {

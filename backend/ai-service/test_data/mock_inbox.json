@@ -1,0 +1,152 @@
+[
+  {
+    "gmail_id": "mock_g01",
+    "thread_id": "mock_t01",
+    "sender": "Avery Chen <avery.chen@company.com>",
+    "subject": "Approval needed: Q3 vendor contract (decision required by tomorrow)",
+    "snippet": "Hi — I need your sign-off on the AcmeCloud vendor contract before we...",
+    "body": "Hi —\n\nI need your sign-off on the AcmeCloud vendor contract before we finalize the quarterly vendor roster. The contract includes the revised SLA and the new pricing tier that increases our committed spend by 12%. Procurement has done their review and legal has cleared the indemnity and data clauses, but the billing amendment requires an executive approval because it exceeds your delegation limit.\n\nIf you agree, please reply with APPROVE or REJECT and any conditions. If you need more time, tell me what you'd like changed; procurement can push back, but the vendor is asking for a final answer tomorrow morning so we don't lose the onboarding discount.\n\nThanks for handling quickly — your call is the only thing holding this up.\n\nBest,\nAvery Chen\nDirector, Procurement",
+    "received_at": "2026-07-28T08:42:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g01"
+  },
+  {
+    "gmail_id": "mock_g02",
+    "thread_id": "mock_t02",
+    "sender": "IT Security <security-alerts@company.com>",
+    "subject": "Security alert: Unusual sign-in detected for your account",
+    "snippet": "Hello, our systems detected an unusual sign-in to your account from a new...",
+    "body": "Hello,\n\nOur systems detected an unusual sign-in to your account from a new geographic location at 03:12 UTC. We blocked the session and sent a password reset to your recovery email as a precaution. Please review your recent activity and change your password immediately if you did not recognize this access.\n\nAdditionally, please enable two-factor authentication (if not already enabled) and check any connected apps or OAuth tokens. If you notice any transactions or email forwarding rules you did not create, reply to this message immediately and our incident team will escalate and begin remediation.\n\nThis is an automated alert but requires prompt attention if you did not authorize the activity.\n\nRegards,\nSecurity Operations Center",
+    "received_at": "2026-07-28T06:05:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g02"
+  },
+  {
+    "gmail_id": "mock_g03",
+    "thread_id": "mock_t03",
+    "sender": "Marta Ruiz <mruiz@clientco.com>",
+    "subject": "Escalation: Project Delta deliverable missing — need your decision",
+    "snippet": "Hi — we've reached a point where Project Delta is blocked because the...",
+    "body": "Hi —\n\nWe've reached a point where Project Delta is blocked because the vendor failed to deliver the integration tests we were promised last week. Our internal QA flagged multiple regressions and we cannot proceed to UAT without a remediation plan. The client is pressing for a timeline and is considering pausing the rollout if we don't provide a clear path forward.\n\nI need you to decide whether to (A) accept the vendor's proposed patch with our additional testing scope, or (B) terminate the vendor's scope and reassign the work internally. Each choice has cost and schedule implications; procurement and legal both want your direction so they can prepare the amendment or termination notice.\n\nPlease advise today so we can update the client before their leadership call.\n\nThanks,\nMarta Ruiz\nProgram Manager, ClientCo",
+    "received_at": "2026-07-27T17:10:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g03"
+  },
+  {
+    "gmail_id": "mock_g04",
+    "thread_id": "mock_t04",
+    "sender": "HR Benefits <benefits@company.com>",
+    "subject": "Reminder: Open Enrollment form due by July 31 (low priority)",
+    "snippet": "Hello — friendly reminder to complete the open enrollment form by July 31 to...",
+    "body": "Hello,\n\nFriendly reminder to complete the open enrollment form by July 31 to confirm your benefits selections for the upcoming plan year. If you are happy with your current elections and do nothing, your existing coverage will continue unchanged. This year we added a telehealth provider option and a new dental plan, so please review the summary before submitting.\n\nThis is not urgent if you have already completed it; the form is simply to ensure our records are accurate and to process any changes in payroll deductions. If you need assistance logging in, reply to this email and HR will schedule a short screen share.\n\nBest regards,\nHR Benefits Team",
+    "received_at": "2026-07-26T09:24:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g04"
+  },
+  {
+    "gmail_id": "mock_g05",
+    "thread_id": "mock_t05",
+    "sender": "Learning & Development <ld@company.com>",
+    "subject": "Optional survey: Leadership training feedback (due Aug 5)",
+    "snippet": "Hi — we'd appreciate your feedback on last week's leadership session. Please complete...",
+    "body": "Hi —\n\nWe'd appreciate your feedback on last week's leadership session. Please complete the short evaluation so we can improve future training. The survey only contains five questions and should take under five minutes; responses are anonymous.\n\nAlthough the deadline listed is August 5, this is low-stakes and intended to help the facilitators refine material. If you prefer not to participate, there's no penalty — we just value your input.\n\nThank you for taking a moment to share your thoughts.\n\nWarmly,\nLearning & Development",
+    "received_at": "2026-07-25T14:02:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g05"
+  },
+  {
+    "gmail_id": "mock_g06",
+    "thread_id": "mock_t06",
+    "sender": "Product Weekly <updates@product.company.com>",
+    "subject": "Product Digest: July 24–30",
+    "snippet": "Hello team — this week's product digest covers feature flags, UX tweaks, and...",
+    "body": "Hello team —\n\nThis week's product digest covers feature flags, UX tweaks, and a short update on the telemetry rollout. The A/B we ran on the onboarding flow showed a 7% lift in activation time; we'll continue running variant B for two more weeks. UX pushed minor copy updates to the settings page to reduce confusion around privacy toggles.\n\nEngineering announced a freeze on API v1 for deprecation planning, and support published updated troubleshooting docs for the mobile app. No action is required from most teams — this is an informational roundup to keep everyone aligned.\n\nCheers,\nProduct Team",
+    "received_at": "2026-07-24T07:55:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g06"
+  },
+  {
+    "gmail_id": "mock_g07",
+    "thread_id": "mock_t07",
+    "sender": "Acme Retail <orders@acmeretail.com>",
+    "subject": "Your order #56291 has shipped",
+    "snippet": "Good news — your order #56291 shipped today via FastShip. Tracking: FS123456789. Expected...",
+    "body": "Good news —\n\nYour order #56291 shipped today via FastShip. Tracking: FS123456789. Expected delivery is shown on the carrier site and may update over the coming days. The package contains the office ergonomic mouse and one set of replacement keys you ordered.\n\nIf the tracking shows any issues or the delivery window doesn't match your schedule, reply to this email or visit your order history to request a redirect. For returns, please use the online portal within 30 days of delivery; our return policy and instructions are linked in your account.\n\nThanks for shopping with Acme Retail.\n\nRegards,\nAcme Retail Orders",
+    "received_at": "2026-07-25T12:16:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g07"
+  },
+  {
+    "gmail_id": "mock_g08",
+    "thread_id": "mock_t08",
+    "sender": "Billing Notifications <billing@saasco.com>",
+    "subject": "Monthly usage report: July invoice preview",
+    "snippet": "Hi — your July usage preview is attached. Current projected charges are $1,243.50...",
+    "body": "Hi —\n\nYour July usage preview is attached. Current projected charges are $1,243.50 based on API calls and storage consumption. This is an automated notice to help you budget; your final invoice will be posted on the first business day of next month. If you've added significant capacity this month, expect a higher final charge.\n\nNo immediate action is required unless you see an unexpected spike. If you do, reply with the details and our billing team will investigate usage anomalies and apply any applicable credits.\n\nThanks,\nSaaSCo Billing Services",
+    "received_at": "2026-07-24T20:40:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g08"
+  },
+  {
+    "gmail_id": "mock_g09",
+    "thread_id": "mock_t09",
+    "sender": "Team Notes <standup-notes@company.com>",
+    "subject": "FYI: Standup notes and action log (no action required)",
+    "snippet": "Morning all — attached are the standup notes and action log from today's meeting...",
+    "body": "Morning all —\n\nAttached are the standup notes and action log from today's meeting. Highlights: deployment completed for staging, Jenna will investigate the intermittent test failure, and the UX team will finalize the icon set by next sprint. There are a few follow-ups listed with owners and expected check-in points.\n\nThis message is FYI for those not on the call; no action is required unless you are listed as an owner in the action log. If you disagree with an assignment, reply and we'll reassign in the next sync.\n\nThanks,\nStandup Coordinator",
+    "received_at": "2026-07-28T09:05:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g09"
+  },
+  {
+    "gmail_id": "mock_g10",
+    "thread_id": "mock_t10",
+    "sender": "Sam (totally URGENT) <sam.j@company.com>",
+    "subject": "URGENT: (not really) Can you look at my spreadsheet?",
+    "snippet": "Hey — URGENT (kidding) — I added some numbers to the Q3 forecast spreadsheet and...",
+    "body": "Hey —\n\nURGENT (kidding) — I added some numbers to the Q3 forecast spreadsheet and rearranged a few rows because I thought it made sense. I know you love the original layout, so I wanted to flag the change and see if you're okay with it. No emergency here, just thought I'd poke you before anyone else notices.\n\nIf you prefer the previous version, I can revert and keep my tweaks in a separate tab. Otherwise, I'll tidy the notes and we can push the updated file to the shared folder.\n\nThanks — not actually an emergency,\nSam\nProduct Analyst",
+    "received_at": "2026-07-27T11:33:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g10"
+  },
+  {
+    "gmail_id": "mock_g11",
+    "thread_id": "mock_t11",
+    "sender": "FlashDeals <offers@flashdeals.example.com>",
+    "subject": "URGENT SALE: 70% off everything today only!",
+    "snippet": "Hurry — URGENT SALE! Today only: everything up to 70% off. Use code FLASH70...",
+    "body": "Hurry —\n\nURGENT SALE! Today only: everything up to 70% off. Use code FLASH70 at checkout to unlock steep discounts across electronics, home goods, and apparel. Inventory is limited; items are selling out fast. This email is to let our VIP subscribers know about the deal before it goes public.\n\nClick through to see your personalized recommendations. Prices and availability may change without notice; standard return policy applies. If you don't want these emails, use the unsubscribe link below.\n\nBest,\nThe FlashDeals Team",
+    "received_at": "2026-07-26T05:48:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g11"
+  },
+  {
+    "gmail_id": "mock_g12",
+    "thread_id": "mock_t12",
+    "sender": "Jordan Price <jordan.price@partnerco.com>",
+    "subject": "Frustrated with delivery — please address",
+    "snippet": "I'm really frustrated — we were promised a functioning integration last week and it's...",
+    "body": "I'm really frustrated —\n\nWe were promised a functioning integration last week and it's still not in a usable state. My team has been waiting, re-testing, and filing tickets only to see little to no progress. This is impacting our demo schedule and I'm getting pushback from stakeholders. I realize things happen, but the communication has been poor and escalation to your product lead didn't yield results.\n\nPlease explain why this rollout is delayed and what specific steps you'll take to resolve the defects. I'm not demanding an immediate miracle, but I do expect clear timelines and a single point of contact who will own follow-through.\n\nAwaiting a concrete plan,\nJordan Price\nHead of Integrations, PartnerCo",
+    "received_at": "2026-07-25T16:50:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g12"
+  },
+  {
+    "gmail_id": "mock_g13",
+    "thread_id": "mock_t13",
+    "sender": "Nina Patel <nina.patel@marketing.com>",
+    "subject": "Draft copy for homepage — we'd like feedback before the next meeting",
+    "snippet": "Hi — attached is the draft homepage copy. We'd like your feedback before the...",
+    "body": "Hi —\n\nAttached is the draft homepage copy. We'd like your feedback before the next meeting so we can consolidate comments and send a near-final version to design. There isn't a formal deadline listed in the document; however, if we want to present a cohesive set of options at Tuesday's stakeholder review, it would help to have your notes sooner rather than later.\n\nPlease skim the sections you own and add inline comments in the Google Doc. If anything reads oddly or contradicts the product spec, flag it. I'm available for a quick call if you want to talk through tone or positioning.\n\nThanks,\nNina Patel\nContent Strategist",
+    "received_at": "2026-07-27T09:15:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g13"
+  },
+  {
+    "gmail_id": "mock_g14",
+    "thread_id": "mock_t14",
+    "sender": "Marcus Lee <marcus.lee@vendor.com>",
+    "subject": "I'll be onsite by Friday to install the hardware",
+    "snippet": "Hi — quick note that I'll be onsite by Friday to install the new switches;...",
+    "body": "Hi —\n\nQuick note that I'll be onsite by Friday to install the new switches; I'll bring the spare screws and the updated firmware image. I wanted to confirm access to the server room and whether someone from your team will be available for the final burn-in tests.\n\nThis isn't a deadline for you to do anything — just letting you know my travel plan so we can coordinate. If Friday doesn't work for you, let me know and I can reschedule for the following week. Otherwise, I'll expect the normal access badge and a 30-minute window for the power cutover.\n\nCheers,\nMarcus Lee\nField Engineer, VendorCo",
+    "received_at": "2026-07-24T13:07:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g14"
+  },
+  {
+    "gmail_id": "mock_g15",
+    "thread_id": "mock_t15",
+    "sender": "Olivia Grant <olivia.grant@bigclient.com>",
+    "subject": "Client upset — please call me when you can",
+    "snippet": "Hi — I'm quite upset after the demo today. The integration failed and our...",
+    "body": "Hi —\n\nI'm quite upset after the demo today. The integration failed and our stakeholders were left watching a spinning loader for five minutes. This has damaged confidence and I need to speak to someone senior who can explain what went wrong and what concrete steps you'll take to make it right.\n\nThis isn't about a calendar deadline — it's about restoring trust. Please call me as soon as you are able so we can talk through the details and establish a corrective plan. If you prefer, send me a time window when a senior engineer and your project manager can be available and I'll arrange a call.\n\nSincerely,\nOlivia Grant\nDirector of Product, BigClient",
+    "received_at": "2026-07-28T10:28:00-07:00",
+    "gmail_link": "https://mail.google.com/mail/u/0/#inbox/mock_g15"
+  }
+]

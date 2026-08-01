@@ -72,3 +72,6 @@ __pycache__/
 # Editor / OS
 .vscode/
 .DS_Store
+
+# Handoff
+HANDOFF.md

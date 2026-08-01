@@ -2,3 +2,7 @@ fastapi
 uvicorn[standard]
 openai
 python-dotenv
+
+# The shared email/classification schema (shared/ folder), installed
+# editable so both services always use the exact same definitions
+-e ../../shared

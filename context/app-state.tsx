@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 import { defaultNotificationSettings, defaultProfile } from '@/data/mockProfile';
 import { connectAccount as connectAccountService } from '@/services/accountService';
+import { setSessionToken } from '@/services/apiClient';
+import { getSettings, updateSettings as updateSettingsService } from '@/services/settingsService';
 import type { Account, NotificationSettings, Provider, UserProfile } from '@/types/mail';
 
 const STORAGE_KEY = 'focus-mail-app/state';
@@ -17,6 +19,7 @@ interface PersistedState {
 interface AppStateContextValue extends PersistedState {
   isHydrated: boolean;
   connectAccount: (provider: Provider) => Promise<void>;
+  setGoogleAccount: (email: string, token: string) => Promise<void>;
   updateNotificationSettings: (partial: Partial<NotificationSettings>) => void;
   updateProfile: (partial: Partial<UserProfile>) => void;
   completeOnboarding: () => void;
@@ -57,6 +60,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state)).catch(() => {});
   }, [isHydrated, account, notificationSettings, profile, onboardingComplete]);
 
+  // Pull the real notification prefs from backend/api once a Gmail account
+  // with a real session token is connected. Best-effort: if this is a mock
+  // account (no live backend), the request just fails silently and the
+  // locally-persisted settings keep being used.
+  useEffect(() => {
+    if (!account?.connected || account.provider !== 'gmail') return;
+    getSettings()
+      .then(setNotificationSettings)
+      .catch(() => {});
+  }, [account?.connected, account?.provider]);
+
   const value = useMemo<AppStateContextValue>(
     () => ({
       account,
@@ -68,11 +82,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         const connected = await connectAccountService(provider);
         setAccount(connected);
       },
+      setGoogleAccount: async (email: string, token: string) => {
+        await setSessionToken(token);
+        setAccount({ provider: 'gmail', connected: true, emailAddress: email });
+      },
       updateNotificationSettings: (partial) =>
-        setNotificationSettings((prev) => ({ ...prev, ...partial })),
+        setNotificationSettings((prev) => {
+          const next = { ...prev, ...partial };
+          updateSettingsService(next).catch(() => {});
+          return next;
+        }),
       updateProfile: (partial) => setProfile((prev) => ({ ...prev, ...partial })),
       completeOnboarding: () => setOnboardingComplete(true),
       logout: () => {
+        setSessionToken(null).catch(() => {});
         setAccount(null);
         setOnboardingComplete(false);
       },

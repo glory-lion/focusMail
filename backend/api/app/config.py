@@ -14,6 +14,10 @@ class Settings:
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./focusmail.db")
     ai_service_url: str = os.getenv("AI_SERVICE_URL", "http://localhost:8001")
     session_secret: str = os.getenv("SESSION_SECRET", "dev-secret-change-me")
+    # Where the browser gets sent after /auth/callback finishes, with the
+    # session token attached as a query param. Points at the Expo web dev
+    # server by default.
+    frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:8081")
 
 
 settings = Settings()

@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from urllib.parse import urlencode
+
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
 
 from .. import ai_client
+from ..config import settings
 from ..db import get_session
 from ..gmail import client as gmail_client
 from ..models import EmailMessage, User
@@ -10,6 +13,10 @@ from . import oauth
 from .dependencies import get_current_user
 
 router = APIRouter()
+
+
+def _frontend_redirect(**params: str) -> RedirectResponse:
+    return RedirectResponse(f"{settings.frontend_url}/auth/callback?{urlencode(params)}")
 
 
 @router.get("/auth/login")
@@ -21,14 +28,13 @@ def login():
 def callback(code: str, state: str, session: Session = Depends(get_session)):
     credentials = oauth.exchange_code_for_tokens(state, code)
     if not credentials.refresh_token:
-        raise HTTPException(
-            status_code=400,
-            detail=(
+        return _frontend_redirect(
+            error=(
                 "Google didn't return a refresh token. This usually happens "
                 "if you'd already approved this app before. Revoke access at "
-                "https://myaccount.google.com/permissions and try "
-                "/auth/login again."
-            ),
+                "https://myaccount.google.com/permissions and try connecting "
+                "again."
+            )
         )
     email = oauth.get_profile_email(credentials)
 
@@ -57,11 +63,7 @@ def callback(code: str, state: str, session: Session = Depends(get_session)):
         except Exception:
             pass
 
-    return {
-        "status": "connected",
-        "email": user.email,
-        "session_token": user.session_token,
-    }
+    return _frontend_redirect(token=user.session_token, email=user.email)
 
 
 @router.delete("/account")

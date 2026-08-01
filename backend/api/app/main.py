@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .auth.routes import router as auth_router
 from .db import init_db
@@ -19,6 +20,18 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="focusMail API", lifespan=lifespan)
+
+# Dev-only: allow the Expo web dev server (and any localhost port) to call
+# this API from the browser. Tighten this to specific origins before
+# shipping anywhere real.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=r"http://localhost:\d+",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth_router)
 app.include_router(emails_router)
 app.include_router(settings_router)

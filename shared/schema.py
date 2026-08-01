@@ -1,7 +1,16 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class Attachment(BaseModel):
+    """Safe attachment metadata. Attachment contents are never persisted."""
+
+    attachment_id: str
+    filename: str
+    mime_type: str
+    size: int = 0
 
 
 class NormalizedEmail(BaseModel):
@@ -19,6 +28,7 @@ class NormalizedEmail(BaseModel):
     snippet: str
     received_at: datetime
     gmail_link: str
+    attachments: list[Attachment] = Field(default_factory=list)
 
 
 class Classification(BaseModel):
@@ -27,6 +37,7 @@ class Classification(BaseModel):
     needs_action: bool
     has_deadline: bool
     is_important: bool
+    urgency_score: int = Field(default=0, ge=0, le=100)
     summary: str
 
 

@@ -32,4 +32,10 @@ class EmailMessage(SQLModel, table=True):
     needs_action: Optional[bool] = None
     has_deadline: Optional[bool] = None
     is_important: Optional[bool] = None
+    urgency_score: Optional[int] = None
     summary: Optional[str] = None
+    attachments_json: str = Field(default="[]")
+    is_read: bool = Field(default=False)
+    is_archived: bool = Field(default=False)
+    is_deleted: bool = Field(default=False)
+    is_replied: bool = Field(default=False)

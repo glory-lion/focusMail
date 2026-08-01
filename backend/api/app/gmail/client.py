@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from schema import NormalizedEmail
+from schema import Attachment, NormalizedEmail
 
 from ..config import settings
 from ..models import EmailMessage, User
@@ -32,6 +32,25 @@ def _header(headers: list[dict], name: str) -> str:
         if header["name"].lower() == name.lower():
             return header["value"]
     return ""
+
+
+def _extract_attachments(payload: dict) -> list[Attachment]:
+    attachments: list[Attachment] = []
+    filename = payload.get("filename", "")
+    body = payload.get("body", {})
+    attachment_id = body.get("attachmentId")
+    if filename and attachment_id:
+        attachments.append(
+            Attachment(
+                attachment_id=attachment_id,
+                filename=filename,
+                mime_type=payload.get("mimeType", "application/octet-stream"),
+                size=body.get("size", 0),
+            )
+        )
+    for part in payload.get("parts", []):
+        attachments.extend(_extract_attachments(part))
+    return attachments
 
 
 def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEmail]:
@@ -61,8 +80,9 @@ def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEma
             .get(
                 userId="me",
                 id=ref["id"],
-                format="metadata",
-                metadataHeaders=["From", "Subject", "Date"],
+                # The MIME part tree is required for attachment metadata.
+                # Body and attachment contents are discarded here.
+                format="full",
             )
             .execute()
         )
@@ -79,6 +99,7 @@ def fetch_recent_emails(user: User, max_results: int = 20) -> list[NormalizedEma
                 snippet=message.get("snippet", ""),
                 received_at=received_at,
                 gmail_link=f"https://mail.google.com/mail/u/0/#inbox/{message['id']}",
+                attachments=_extract_attachments(message["payload"]),
             )
         )
     return emails

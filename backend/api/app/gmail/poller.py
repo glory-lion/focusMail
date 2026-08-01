@@ -1,3 +1,5 @@
+import json
+
 from sqlmodel import Session, select
 
 from .. import ai_client
@@ -40,7 +42,11 @@ def _poll_user(session: Session, user: User) -> None:
             needs_action=classification.needs_action,
             has_deadline=classification.has_deadline,
             is_important=classification.is_important,
+            urgency_score=classification.urgency_score,
             summary=classification.summary,
+            attachments_json=json.dumps(
+                [attachment.model_dump() for attachment in normalized.attachments]
+            ),
         )
         session.add(email)
         session.commit()

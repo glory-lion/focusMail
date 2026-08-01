@@ -41,3 +41,18 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Secrets and local data
+.env
+*.db
+*.sqlite3
+
+# Editor / OS
+.vscode/
+.DS_Store

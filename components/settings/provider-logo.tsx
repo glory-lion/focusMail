@@ -11,7 +11,7 @@ export function ProviderLogo({ provider, size = 44 }: { provider: Provider; size
   return (
     <Image
       source={LOGO_SOURCES[provider]}
-      style={{ width: size, height: size, borderRadius: size * 0.26 }}
+      style={{ width: size, height: size, borderRadius: 8 }}
       contentFit="cover"
     />
   );

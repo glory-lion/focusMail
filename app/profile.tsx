@@ -9,7 +9,9 @@ import { ProfileAvatar } from '@/components/settings/profile-avatar';
 import { ScheduleDeliveryBox } from '@/components/settings/schedule-delivery-box';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { TopBarTitle } from '@/components/ui/top-bar-title';
+import { AppHeader, HeaderIconButton } from '@/components/ui/app-header';
+import { GlassCard } from '@/components/ui/glass-card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Fonts, Palette } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -36,7 +38,19 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ headerTitle: () => <TopBarTitle /> }} />
+      <Stack.Screen
+        options={{
+          header: () => (
+            <AppHeader
+              leading={
+                <HeaderIconButton onPress={() => router.back()}>
+                  <IconSymbol name="chevron.left" size={18} color={Colors[colorScheme].text} />
+                </HeaderIconButton>
+              }
+            />
+          ),
+        }}
+      />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.profileHeader}>
           <View style={styles.avatarWrap}>
@@ -58,39 +72,25 @@ export default function ProfileScreen() {
         </View>
 
         <Section title="Connected Accounts">
-          <View style={[styles.card, { backgroundColor: Colors[colorScheme].card, borderColor: Colors[colorScheme].border }]}>
-            <AccountRow
-              provider="gmail"
-              title="Gmail"
-              subtitle={isConnected('gmail') ? account!.emailAddress : 'Not linked'}
-              onPress={isConnected('gmail') ? undefined : () => connectAccount('gmail')}
-              trailing={
-                isConnected('gmail') ? (
-                  <ConnectedPill />
-                ) : (
-                  <ThemedText type="defaultSemiBold" style={[styles.connectText, { color: Colors[colorScheme].tint }]}>
-                    Connect
-                  </ThemedText>
-                )
-              }
-            />
-            <View style={[styles.divider, { backgroundColor: Colors[colorScheme].border }]} />
-            <AccountRow
-              provider="outlook"
-              title="Outlook"
-              subtitle={isConnected('outlook') ? account!.emailAddress : 'Not linked'}
-              onPress={isConnected('outlook') ? undefined : () => connectAccount('outlook')}
-              trailing={
-                isConnected('outlook') ? (
-                  <ConnectedPill />
-                ) : (
-                  <ThemedText type="defaultSemiBold" style={[styles.connectText, { color: Colors[colorScheme].tint }]}>
-                    Connect
-                  </ThemedText>
-                )
-              }
-            />
-          </View>
+          <GlassCard radius={16}>
+            <View style={styles.card}>
+              <AccountRow
+                provider="gmail"
+                title="Gmail"
+                subtitle={isConnected('gmail') ? account!.emailAddress : 'Not linked'}
+                onPress={isConnected('gmail') ? undefined : () => connectAccount('gmail')}
+                trailing={isConnected('gmail') ? <ConnectedPill /> : <ConnectPill />}
+              />
+              <View style={[styles.divider, { backgroundColor: Colors[colorScheme].border }]} />
+              <AccountRow
+                provider="outlook"
+                title="Outlook"
+                subtitle="Not available yet"
+                disabled
+                trailing={<ComingSoonPill />}
+              />
+            </View>
+          </GlassCard>
         </Section>
 
         <Section title="Notifications">
@@ -136,7 +136,7 @@ function ConnectedPill() {
     <View
       style={[
         styles.pill,
-        { backgroundColor: colorScheme === 'dark' ? 'rgba(37,99,235,0.22)' : '#DCE7FB' },
+        { backgroundColor: colorScheme === 'dark' ? Palette.tintSoftDark : Palette.tintSoftLight },
       ]}>
       <ThemedText type="defaultSemiBold" style={styles.pillText} lightColor={Colors.light.tint} darkColor={Colors.dark.tint}>
         Connected
@@ -145,10 +145,32 @@ function ConnectedPill() {
   );
 }
 
+function ConnectPill() {
+  const colorScheme = useColorScheme() ?? 'light';
+  return (
+    <View style={[styles.pill, styles.outlinedPill, { borderColor: Colors[colorScheme].tint }]}>
+      <ThemedText type="defaultSemiBold" style={styles.pillText} lightColor={Colors.light.tint} darkColor={Colors.dark.tint}>
+        Connect
+      </ThemedText>
+    </View>
+  );
+}
+
+function ComingSoonPill() {
+  const colorScheme = useColorScheme() ?? 'light';
+  return (
+    <View style={[styles.pill, { backgroundColor: Colors[colorScheme].border }]}>
+      <ThemedText type="defaultSemiBold" style={[styles.pillText, { color: Colors[colorScheme].icon }]}>
+        Coming soon
+      </ThemedText>
+    </View>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={styles.section}>
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
+      <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
         {title}
       </ThemedText>
       {children}
@@ -161,55 +183,66 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 20,
-    gap: 28,
-    paddingBottom: 40,
+    width: '100%',
+    maxWidth: 520,
+    alignSelf: 'center',
+    paddingHorizontal: 18,
+    paddingTop: 24,
+    paddingBottom: 44,
+    gap: 30,
   },
   profileHeader: {
     alignItems: 'center',
-    gap: 6,
-    paddingTop: 8,
+    gap: 8,
+    paddingTop: 6,
+    paddingBottom: 6,
   },
   avatarWrap: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
   nameInput: {
-    fontSize: 23,
+    fontSize: 24,
     fontFamily: Fonts.semiBold,
+    lineHeight: 30,
     padding: 0,
-    minWidth: 160,
+    width: '100%',
+    maxWidth: 320,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 13,
+    lineHeight: 18,
+    textAlign: 'center',
   },
   section: {
-    gap: 12,
+    gap: 13,
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: 18,
+    lineHeight: 24,
   },
   card: {
-    borderWidth: 1,
-    borderRadius: 18,
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
   },
   pill: {
     borderRadius: 999,
-    paddingVertical: 5,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 13,
+  },
+  outlinedPill: {
+    borderWidth: 1.5,
+    backgroundColor: 'transparent',
   },
   pillText: {
-    fontSize: 13,
-  },
-  connectText: {
-    fontSize: 13,
+    fontSize: 12,
+    lineHeight: 16,
   },
   logoutButton: {
     borderWidth: 1.5,
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
   },

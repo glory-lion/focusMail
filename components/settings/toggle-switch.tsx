@@ -30,7 +30,7 @@ export function ToggleSwitch({
 
   const trackColor = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [colorScheme === 'dark' ? '#3A4557' : '#D8DEE8', Colors[colorScheme].tint],
+    outputRange: [colorScheme === 'dark' ? '#344054' : '#D0D5DD', Colors[colorScheme].tint],
   });
 
   const thumbTranslate = anim.interpolate({

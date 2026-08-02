@@ -1,5 +1,5 @@
 import { apiFetch, ApiError } from '@/services/apiClient';
-import type { Attachment, DayBucket, Email, EmailSender, WeeklyInsightsStats } from '@/types/mail';
+import type { ActionItem, Attachment, DayBucket, Email, EmailSender, WeeklyInsightsStats } from '@/types/mail';
 
 const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const CRITICAL_URGENCY_THRESHOLD = 90;
@@ -13,6 +13,16 @@ function dayBucketFor(date: Date): DayBucket {
   if (diffDays === 0) return 'TODAY';
   if (diffDays === 1) return 'YESTERDAY';
   return WEEKDAY_NAMES[date.getDay()];
+}
+
+// backend/api stores and serializes datetimes as naive UTC (no "Z"/offset,
+// e.g. "2026-07-28T09:00:00") — but JS's Date constructor treats a
+// timezone-less ISO string as LOCAL time, not UTC. Left alone, every
+// timestamp would be off by exactly the device's UTC offset. Fixed once
+// here, at the API boundary, so every downstream consumer that does
+// `new Date(email.timestamp)` gets a correctly UTC-tagged string already.
+function utcIso(raw: string): string {
+  return /Z|[+-]\d\d:\d\d$/.test(raw) ? raw : `${raw}Z`;
 }
 
 function parseSender(raw: string): EmailSender {
@@ -115,11 +125,14 @@ function mapApiAttachment(api: ApiAttachment): Attachment {
 
 function mapApiEmail(api: ApiEmail): Email {
   const classification = api.classification;
-  const deadlines = classification?.deadline ? [new Date(classification.deadline).toLocaleString()] : [];
-  const keyPoints = [
-    classification?.summary_detailed,
-    ...(classification?.action_items.map((item) => item.text) ?? []),
-  ].filter((v): v is string => Boolean(v));
+  const deadline = classification?.deadline ? utcIso(classification.deadline) : null;
+  const deadlines = deadline ? [new Date(deadline).toLocaleString()] : [];
+  const keyPoints = [classification?.summary_detailed].filter((v): v is string => Boolean(v));
+  const actionItems: ActionItem[] = (classification?.action_items ?? []).map((item) => ({
+    id: item.id,
+    text: item.text,
+    dueDate: item.due_date ? utcIso(item.due_date) : null,
+  }));
 
   return {
     id: String(api.id),
@@ -127,17 +140,19 @@ function mapApiEmail(api: ApiEmail): Email {
     subject: api.subject,
     preview: api.snippet,
     body: api.body ?? '',
-    timestamp: api.received_at,
-    dayBucket: dayBucketFor(new Date(api.received_at)),
+    timestamp: utcIso(api.received_at),
+    dayBucket: dayBucketFor(new Date(utcIso(api.received_at))),
     gmailLink: api.gmail_link,
     important: classification?.is_important ?? false,
     urgencyScore: classification?.urgency_score ?? 0,
+    deadline,
     summary: classification?.summary_short ?? api.snippet,
     detailedSummary: {
       deadlines,
       keyPoints: keyPoints.length > 0 ? keyPoints : [api.snippet],
     },
     suggestedReply: classification?.suggested_reply ?? '',
+    actionItems,
     read: api.is_read,
     hasAttachment: api.has_attachment,
     attachments: api.attachments.map(mapApiAttachment),
@@ -172,9 +187,29 @@ export async function getEmailById(id: string): Promise<Email | undefined> {
   }
 }
 
-export async function sendReply(id: string, text: string): Promise<void> {
+export interface ReplyAttachment {
+  name: string;
+  mimeType: string;
+  base64: string;
+}
+
+export async function sendReply(
+  id: string,
+  text: string,
+  attachments: ReplyAttachment[] = []
+): Promise<void> {
   // POST /emails/{id}/send already sets is_replied=true server-side.
-  await apiFetch(`/emails/${id}/send`, { method: 'POST', body: JSON.stringify({ body: text }) });
+  await apiFetch(`/emails/${id}/send`, {
+    method: 'POST',
+    body: JSON.stringify({
+      body: text,
+      attachments: attachments.map((a) => ({
+        filename: a.name,
+        mime_type: a.mimeType,
+        content_base64: a.base64,
+      })),
+    }),
+  });
 }
 
 export async function markAsRead(id: string): Promise<void> {
@@ -209,9 +244,14 @@ export function groupEmailsByDay(emails: Email[]): EmailSection[] {
     buckets.set(email.dayBucket, list);
   }
 
+  // Plain reverse-chronological — urgencyScore/deadline-based priority
+  // sort was tried and dropped: too many real emails (e.g. one message
+  // covering several unrelated tasks with different due dates) don't fit
+  // a single "how urgent is this" score cleanly, making the ordering less
+  // predictable than just showing newest first.
   const sections: EmailSection[] = Array.from(buckets.entries()).map(([dayBucket, data]) => ({
     dayBucket,
-    data: [...data].sort((a, b) => b.urgencyScore - a.urgencyScore),
+    data: [...data].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
   }));
 
   sections.sort((a, b) => {

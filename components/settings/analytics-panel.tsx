@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { GlassCard } from '@/components/ui/glass-card';
 import { Colors, Mono, Palette } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { WeeklyInsightsStats } from '@/types/mail';
@@ -8,15 +9,17 @@ export function AnalyticsPanel({ stats }: { stats: WeeklyInsightsStats }) {
   const colorScheme = useColorScheme() ?? 'light';
 
   return (
-    <View style={[styles.panel, { backgroundColor: Colors[colorScheme].card, borderColor: Colors[colorScheme].border }]}>
-      <Text style={[styles.heading, { color: Colors[colorScheme].icon }]}>LAST 7 DAYS — ANALYTICS</Text>
-      <View style={styles.grid}>
-        <Stat value={stats.totalEmails} label="Total emails" color={Colors[colorScheme].text} colorScheme={colorScheme} />
-        <Stat value={stats.needAction} label="Need action" color={Palette.action} colorScheme={colorScheme} />
-        <Stat value={stats.unread} label="Unread" color={Palette.warning} colorScheme={colorScheme} />
-        <Stat value={stats.critical} label="Important" color={Palette.critical} colorScheme={colorScheme} />
+    <GlassCard radius={18}>
+      <View style={styles.panel}>
+        <Text style={[styles.heading, { color: Colors[colorScheme].icon }]}>LAST 7 DAYS — ANALYTICS</Text>
+        <View style={styles.grid}>
+          <Stat value={stats.totalEmails} label="Total emails" color={Colors[colorScheme].text} colorScheme={colorScheme} />
+          <Stat value={stats.needAction} label="Need action" color={Palette.action} colorScheme={colorScheme} />
+          <Stat value={stats.unread} label="Unread" color={Palette.warning} colorScheme={colorScheme} />
+          <Stat value={stats.critical} label="Important" color={Palette.critical} colorScheme={colorScheme} />
+        </View>
       </View>
-    </View>
+    </GlassCard>
   );
 }
 
@@ -35,7 +38,10 @@ function Stat({
     <View
       style={[
         styles.cell,
-        { backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.04)' : '#F7F9FD', borderColor: Colors[colorScheme].border },
+        {
+          backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.45)',
+          borderColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.7)',
+        },
       ]}>
       <Text style={[styles.value, { color }]}>{value}</Text>
       <Text style={[styles.label, { color: Colors[colorScheme].icon }]}>{label}</Text>
@@ -45,8 +51,6 @@ function Stat({
 
 const styles = StyleSheet.create({
   panel: {
-    borderWidth: 1,
-    borderRadius: 18,
     padding: 18,
     gap: 14,
   },

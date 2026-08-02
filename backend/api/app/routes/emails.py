@@ -145,8 +145,15 @@ def update_email_state(
     return _to_email_out(email)
 
 
+class ReplyAttachment(BaseModel):
+    filename: str
+    mime_type: str
+    content_base64: str
+
+
 class SendReplyRequest(BaseModel):
     body: str
+    attachments: list[ReplyAttachment] = []
 
 
 @router.post("/emails/{email_id}/send")
@@ -160,7 +167,9 @@ def send_reply(
     if not email or email.user_id != user.id:
         raise HTTPException(status_code=404, detail="Email not found")
 
-    gmail_client.send_reply(user, email, payload.body)
+    gmail_client.send_reply(
+        user, email, payload.body, [a.model_dump() for a in payload.attachments]
+    )
     email.is_replied = True
     session.add(email)
     session.commit()

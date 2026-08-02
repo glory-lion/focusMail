@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccountRow } from '@/components/settings/account-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { GlassCard } from '@/components/ui/glass-card';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
@@ -38,52 +39,58 @@ export default function ConnectAccountScreen() {
         </View>
 
         <View style={styles.rows}>
-          <View style={[styles.card, { borderColor: Colors[colorScheme].border, backgroundColor: Colors[colorScheme].card }]}>
-            <AccountRow
-              provider="gmail"
-              title="Connect Gmail"
-              subtitle="Recommended for individuals"
-              onPress={startGoogleOAuth}
-              trailing={
-                account?.provider === 'gmail' && account.connected ? (
-                  <IconSymbol name="checkmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
-                ) : (
-                  <IconSymbol name="chevron.right" size={20} color={Colors[colorScheme].icon} />
-                )
-              }
-            />
-          </View>
-          <View style={[styles.card, { borderColor: Colors[colorScheme].border, backgroundColor: Colors[colorScheme].card }]}>
-            <AccountRow
-              provider="outlook"
-              title="Connect Outlook"
-              subtitle="Preferred for corporate enterprise"
-              disabled
-              trailing={
-                <View style={[styles.comingSoonPill, { backgroundColor: Colors[colorScheme].border }]}>
-                  <ThemedText style={[styles.comingSoonText, { color: Colors[colorScheme].icon }]}>
-                    Coming soon
-                  </ThemedText>
-                </View>
-              }
-            />
-          </View>
+          <GlassCard radius={16}>
+            <View style={styles.card}>
+              <AccountRow
+                provider="gmail"
+                title="Connect Gmail"
+                subtitle="Recommended for individuals"
+                onPress={startGoogleOAuth}
+                trailing={
+                  account?.provider === 'gmail' && account.connected ? (
+                    <IconSymbol name="checkmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
+                  ) : (
+                    <IconSymbol name="chevron.right" size={20} color={Colors[colorScheme].icon} />
+                  )
+                }
+              />
+            </View>
+          </GlassCard>
+          <GlassCard radius={16}>
+            <View style={styles.card}>
+              <AccountRow
+                provider="outlook"
+                title="Connect Outlook"
+                subtitle="Preferred for corporate enterprise"
+                disabled
+                trailing={
+                  <View style={[styles.comingSoonPill, { backgroundColor: Colors[colorScheme].border }]}>
+                    <ThemedText style={[styles.comingSoonText, { color: Colors[colorScheme].icon }]}>
+                      Coming soon
+                    </ThemedText>
+                  </View>
+                }
+              />
+            </View>
+          </GlassCard>
         </View>
 
-        <View style={[styles.noticeBox, { borderColor: Colors[colorScheme].border, backgroundColor: Colors[colorScheme].card }]}>
-          <IconSymbol name="checkmark.circle.fill" size={18} color={Colors[colorScheme].tint} />
-          <ThemedText style={[styles.noticeText, { color: Colors[colorScheme].icon }]}>
-            We only access essential metadata for classification. Your data is{' '}
-            <ThemedText type="defaultSemiBold" style={styles.noticeStrong}>
-              encrypted
-            </ThemedText>{' '}
-            and automatically{' '}
-            <ThemedText type="defaultSemiBold" style={styles.noticeStrong}>
-              deleted after 7 days
+        <GlassCard radius={14}>
+          <View style={styles.noticeBox}>
+            <IconSymbol name="checkmark.circle.fill" size={18} color={Colors[colorScheme].tint} />
+            <ThemedText style={[styles.noticeText, { color: Colors[colorScheme].icon }]}>
+              We only access essential metadata for classification. Your data is{' '}
+              <ThemedText type="defaultSemiBold" style={styles.noticeStrong}>
+                encrypted
+              </ThemedText>{' '}
+              and automatically{' '}
+              <ThemedText type="defaultSemiBold" style={styles.noticeStrong}>
+                deleted after 7 days
+              </ThemedText>
+              .
             </ThemedText>
-            .
-          </ThemedText>
-        </View>
+          </View>
+        </GlassCard>
       </View>
 
       <View style={styles.footer}>
@@ -144,8 +151,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    borderWidth: 1,
-    borderRadius: 16,
     paddingHorizontal: 16,
   },
   comingSoonPill: {
@@ -160,8 +165,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 10,
-    borderWidth: 1,
-    borderRadius: 14,
     padding: 14,
   },
   noticeText: {

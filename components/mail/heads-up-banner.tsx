@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(248,113,113,0.35)',
-    backgroundColor: 'rgba(248,113,113,0.08)',
+    borderColor: 'rgba(225,29,72,0.22)',
+    backgroundColor: 'rgba(225,29,72,0.07)',
   },
   text: {
     flex: 1,

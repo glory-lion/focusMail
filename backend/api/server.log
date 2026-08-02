@@ -1,0 +1,158 @@
+INFO:     Started server process [23124]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:46151 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44926 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46586 - "OPTIONS /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46586 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47164 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4769 - "OPTIONS /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4769 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:31064 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47815 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42128 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:3190 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58691 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:12092 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:13041 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48699 - "OPTIONS /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48699 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53443 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:24778 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44551 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59892 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:30119 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:2903 - "OPTIONS /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:2903 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4928 - "PUT /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:12422 - "OPTIONS /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:12422 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5361 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52200 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52200 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33027 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:9894 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33955 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6561 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35778 - "OPTIONS /emails/27 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35778 - "GET /emails/27 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45710 - "OPTIONS /emails/27/send HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45710 - "POST /emails/27/send HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 421, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\fastapi\applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\vicky\miniconda3\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "D:\Hackathon\Acacia\backend\api\app\routes\emails.py", line 170, in send_reply
+    gmail_client.send_reply(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        user, email, payload.body, [a.model_dump() for a in payload.attachments]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Hackathon\Acacia\backend\api\app\gmail\client.py", line 251, in send_reply
+    part.set_payload(base64.b64decode(attachment["content_base64"]))
+                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vicky\miniconda3\Lib\base64.py", line 88, in b64decode
+    return binascii.a2b_base64(s, strict_mode=validate)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+binascii.Error: Incorrect padding
+INFO:     127.0.0.1:52478 - "OPTIONS /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52478 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52554 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:16279 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55534 - "OPTIONS /emails/26 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55534 - "GET /emails/26 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45600 - "GET /emails/26 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:18031 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:19437 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38240 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36015 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36015 - "OPTIONS /emails/27 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36015 - "GET /emails/27 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8116 - "OPTIONS /emails/27/send HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8116 - "POST /emails/27/send HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50417 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36094 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8713 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:9309 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21527 - "OPTIONS /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21527 - "PUT /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11217 - "OPTIONS /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11217 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:29502 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:1798 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:27076 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40522 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:27852 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51397 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:22585 - "GET /emails?include_archived=true&include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36078 - "GET /docs HTTP/1.1" 200 OK

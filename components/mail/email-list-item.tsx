@@ -3,8 +3,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { ImportantTag } from '@/components/mail/important-tag';
 import { SummaryBadge } from '@/components/mail/summary-badge';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Colors, Fonts, Palette } from '@/constants/theme';
+import { GlassCard } from '@/components/ui/glass-card';
+import { Colors, Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Email } from '@/types/mail';
 
@@ -16,19 +16,16 @@ function formatTime(iso: string): string {
 export function EmailListItem({ email, onPress }: { email: Email; onPress: () => void }) {
   const colorScheme = useColorScheme() ?? 'light';
   const unread = !email.read;
-  const unreadBackground = colorScheme === 'dark' ? Palette.unreadBackgroundDark : Palette.unreadBackgroundLight;
+  const unreadTint = colorScheme === 'dark' ? 'rgba(34,211,238,0.10)' : 'rgba(14,116,144,0.06)';
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [pressed && styles.pressed]}>
-      <ThemedView
-        style={[
-          styles.card,
-          {
-            backgroundColor: unread ? unreadBackground : Colors[colorScheme].card,
-            borderColor: Colors[colorScheme].border,
-            borderLeftWidth: unread ? 4 : 1,
-            borderLeftColor: unread ? Colors[colorScheme].tint : Colors[colorScheme].border,
-          },
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.wrap, pressed && styles.pressed]}>
+      <GlassCard
+        radius={14}
+        intensity={unread ? 55 : 35}
+        surfaceStyle={[
+          unread && { backgroundColor: unreadTint },
+          { borderLeftWidth: unread ? 4 : 1, borderLeftColor: unread ? Colors[colorScheme].tint : undefined },
         ]}>
         <View style={styles.content}>
           <View style={styles.headerRow}>
@@ -55,21 +52,18 @@ export function EmailListItem({ email, onPress }: { email: Email; onPress: () =>
           </ThemedText>
         </View>
         <SummaryBadge text={email.summary} flush borderColor={Colors[colorScheme].border} />
-      </ThemedView>
+      </GlassCard>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.7,
-  },
-  card: {
-    borderWidth: 1,
-    borderRadius: 14,
+  wrap: {
     marginHorizontal: 16,
     marginBottom: 14,
-    overflow: 'hidden',
+  },
+  pressed: {
+    opacity: 0.7,
   },
   content: {
     padding: 16,

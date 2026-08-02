@@ -1,4 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as DocumentPicker from 'expo-document-picker';
+import { File } from 'expo-file-system';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -12,19 +14,20 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { ActionItems } from '@/components/mail/action-items';
 import { AttachmentCard } from '@/components/mail/attachment-card';
 import { ImportantTag } from '@/components/mail/important-tag';
 import { SummaryBadge } from '@/components/mail/summary-badge';
 import { ProfileAvatar } from '@/components/settings/profile-avatar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { AppHeader, HeaderIconButton } from '@/components/ui/app-header';
+import { GlassCard } from '@/components/ui/glass-card';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { TopBarTitle } from '@/components/ui/top-bar-title';
 import { Colors, Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getEmailById, markAsRead, sendReply, setArchived, setDeleted } from '@/services/mailService';
+import type { ReplyAttachment } from '@/services/mailService';
 import type { Email } from '@/types/mail';
 
 function formatShortTime(iso: string): string {
@@ -38,11 +41,11 @@ function formatFullDate(iso: string): string {
 export default function EmailDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme() ?? 'light';
-  const insets = useSafeAreaInsets();
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const [email, setEmail] = useState<Email | undefined | null>(null);
   const [replyText, setReplyText] = useState('');
-  const [replyAttachments, setReplyAttachments] = useState<string[]>([]);
+  const [replyAttachments, setReplyAttachments] = useState<ReplyAttachment[]>([]);
+  const [isAttaching, setIsAttaching] = useState(false);
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [showSenderEmail, setShowSenderEmail] = useState(false);
   const shiftAnim = useRef(new Animated.Value(0)).current;
@@ -110,7 +113,7 @@ export default function EmailDetailScreen() {
     Keyboard.dismiss();
     collapseForKeyboard();
     setSendState('sending');
-    await sendReply(email.id, replyText);
+    await sendReply(email.id, replyText, replyAttachments);
     setSendState('sent');
     setEmail((prev) => (prev ? { ...prev, replied: true } : prev));
   };
@@ -127,8 +130,36 @@ export default function EmailDetailScreen() {
     setEmail((prev) => (prev ? { ...prev, deleted: next, archived: next ? false : prev.archived } : prev));
   };
 
-  const handleAttach = () => {
-    setReplyAttachments((prev) => [...prev, `Attachment_${prev.length + 1}.pdf`]);
+  const handleAttach = async () => {
+    setIsAttaching(true);
+    try {
+      // base64: true is required on web — expo-document-picker defaults
+      // that to false there, and `File` from expo-file-system used below
+      // for the native fallback is iOS/Android/tvOS only (it throws on web).
+      const result = await DocumentPicker.getDocumentAsync({
+        multiple: true,
+        copyToCacheDirectory: true,
+        base64: true,
+      });
+      if (result.canceled) return;
+
+      const picked = await Promise.all(
+        result.assets.map(async (asset): Promise<ReplyAttachment> => {
+          // Web: expo-document-picker returns a `data:<mime>;base64,<data>`
+          // URL, not raw base64 — strip the prefix so the backend always
+          // gets a plain base64 payload it can decode directly.
+          const raw = asset.base64 ?? (await new File(asset.uri).base64());
+          return {
+            name: asset.name,
+            mimeType: asset.mimeType ?? 'application/octet-stream',
+            base64: raw.replace(/^data:[^;]*;base64,/, ''),
+          };
+        })
+      );
+      setReplyAttachments((prev) => [...prev, ...picked]);
+    } finally {
+      setIsAttaching(false);
+    }
   };
 
   const removeAttachment = (index: number) => {
@@ -136,29 +167,32 @@ export default function EmailDetailScreen() {
   };
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.topBar}>
-        <Pressable onPress={() => router.back()} hitSlop={10} style={styles.backRow}>
-          <IconSymbol name="arrow.left" size={20} color={Colors[colorScheme].tint} />
-          <TopBarTitle />
-        </Pressable>
-        <View style={styles.actionsRow}>
-          <Pressable onPress={handleToggleArchive} hitSlop={8} style={styles.actionButton}>
-            <MaterialCommunityIcons
-              name={email.archived ? 'archive-arrow-up' : 'archive-arrow-up-outline'}
-              size={20}
-              color={Colors[colorScheme].icon}
-            />
-          </Pressable>
-          <Pressable onPress={handleToggleDelete} hitSlop={8} style={styles.actionButton}>
-            <IconSymbol
-              name={email.deleted ? 'trash.slash' : 'trash'}
-              size={20}
-              color={Colors[colorScheme].icon}
-            />
-          </Pressable>
-        </View>
-      </View>
+    <ThemedView style={styles.container}>
+      <AppHeader
+        leading={
+          <HeaderIconButton onPress={() => router.back()}>
+            <IconSymbol name="arrow.left" size={18} color={Colors[colorScheme].text} />
+          </HeaderIconButton>
+        }
+        trailing={
+          <>
+            <HeaderIconButton onPress={handleToggleArchive}>
+              <MaterialCommunityIcons
+                name={email.archived ? 'archive-arrow-up' : 'archive-arrow-up-outline'}
+                size={18}
+                color={Colors[colorScheme].icon}
+              />
+            </HeaderIconButton>
+            <HeaderIconButton onPress={handleToggleDelete}>
+              <IconSymbol
+                name={email.deleted ? 'trash.slash' : 'trash'}
+                size={18}
+                color={Colors[colorScheme].icon}
+              />
+            </HeaderIconButton>
+          </>
+        }
+      />
 
       <Animated.ScrollView
         ref={scrollViewRef}
@@ -223,24 +257,28 @@ export default function EmailDetailScreen() {
         <SummaryBadge text={detailedSummary.keyPoints.join(' ')} expanded />
 
         {hasStructuredDetails ? (
-          <View style={[styles.detailsBlock, { borderColor: Colors[colorScheme].border }]}>
-            {detailedSummary.date ? (
-              <DetailRow icon="calendar" text={detailedSummary.date} />
-            ) : null}
-            {detailedSummary.time ? (
-              <DetailRow icon="clock.fill" text={detailedSummary.time} />
-            ) : null}
-            {detailedSummary.venue ? (
-              <DetailRow icon="mappin.and.ellipse" text={detailedSummary.venue} />
-            ) : null}
-            {detailedSummary.meetingLink ? (
-              <DetailRow icon="link" text={detailedSummary.meetingLink} />
-            ) : null}
-            {detailedSummary.deadlines?.map((deadline, index) => (
-              <DetailRow key={index} icon="checkmark.circle.fill" text={deadline} />
-            ))}
-          </View>
+          <GlassCard radius={12}>
+            <View style={styles.detailsBlock}>
+              {detailedSummary.date ? (
+                <DetailRow icon="calendar" text={detailedSummary.date} />
+              ) : null}
+              {detailedSummary.time ? (
+                <DetailRow icon="clock.fill" text={detailedSummary.time} />
+              ) : null}
+              {detailedSummary.venue ? (
+                <DetailRow icon="mappin.and.ellipse" text={detailedSummary.venue} />
+              ) : null}
+              {detailedSummary.meetingLink ? (
+                <DetailRow icon="link" text={detailedSummary.meetingLink} />
+              ) : null}
+              {detailedSummary.deadlines?.map((deadline, index) => (
+                <DetailRow key={index} icon="checkmark.circle.fill" text={deadline} />
+              ))}
+            </View>
+          </GlassCard>
         ) : null}
+
+        <ActionItems items={email.actionItems} />
 
         <ThemedText style={styles.body}>{email.body}</ThemedText>
 
@@ -252,7 +290,12 @@ export default function EmailDetailScreen() {
           </View>
         ) : null}
 
-        <View style={[styles.replySection, { borderColor: Colors[colorScheme].tint, backgroundColor: Colors[colorScheme].card }]}>
+        <GlassCard
+          radius={18}
+          intensity={45}
+          style={styles.replySectionWrap}
+          surfaceStyle={{ borderColor: Colors[colorScheme].tint, borderWidth: 1.5 }}>
+          <View style={styles.replySection}>
           <ThemedText type="defaultSemiBold" style={styles.replyLabel}>
             Suggested reply
           </ThemedText>
@@ -274,25 +317,25 @@ export default function EmailDetailScreen() {
             ]}
           />
 
-          <Pressable onPress={handleAttach} style={styles.attachButton} hitSlop={6}>
+          <Pressable onPress={handleAttach} disabled={isAttaching} style={styles.attachButton} hitSlop={6}>
             <IconSymbol name="paperclip" size={15} color={Colors[colorScheme].tint} />
             <ThemedText type="defaultSemiBold" style={[styles.attachLabel, { color: Colors[colorScheme].tint }]}>
-              Attach files
+              {isAttaching ? 'Attaching…' : 'Attach files'}
             </ThemedText>
           </Pressable>
 
           {replyAttachments.length > 0 ? (
             <View style={styles.replyAttachmentsRow}>
-              {replyAttachments.map((name, index) => (
+              {replyAttachments.map((attachment, index) => (
                 <View
-                  key={`${name}-${index}`}
+                  key={`${attachment.name}-${index}`}
                   style={[
                     styles.replyAttachmentChip,
                     { backgroundColor: Colors[colorScheme].background, borderColor: Colors[colorScheme].border },
                   ]}>
                   <IconSymbol name="doc.text.fill" size={13} color={Colors[colorScheme].tint} />
                   <ThemedText style={styles.replyAttachmentText} numberOfLines={1}>
-                    {name}
+                    {attachment.name}
                   </ThemedText>
                   <Pressable onPress={() => removeAttachment(index)} hitSlop={8}>
                     <IconSymbol name="xmark" size={12} color={Colors[colorScheme].icon} />
@@ -315,7 +358,8 @@ export default function EmailDetailScreen() {
               {sendState === 'sent' ? 'Sent' : sendState === 'sending' ? 'Sending…' : 'Send Now'}
             </ThemedText>
           </Pressable>
-        </View>
+          </View>
+        </GlassCard>
 
         <Animated.View style={{ height: shiftAnim }} />
       </Animated.ScrollView>
@@ -336,26 +380,6 @@ function DetailRow({ icon, text }: { icon: Parameters<typeof IconSymbol>[0]['nam
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 18,
-  },
-  actionButton: {
-    padding: 2,
   },
   center: {
     flex: 1,
@@ -445,8 +469,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   detailsBlock: {
-    borderWidth: 1,
-    borderRadius: 12,
     padding: 14,
     gap: 10,
   },
@@ -466,12 +488,12 @@ const styles = StyleSheet.create({
   attachments: {
     gap: 10,
   },
+  replySectionWrap: {
+    marginTop: 8,
+  },
   replySection: {
-    borderWidth: 1.5,
-    borderRadius: 18,
     padding: 16,
     gap: 12,
-    marginTop: 8,
   },
   replyLabel: {
     fontSize: 15,

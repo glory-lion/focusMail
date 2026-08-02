@@ -1,28 +1,49 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { LayoutAnimation, Pressable, StyleSheet } from 'react-native';
 
 import { EmailList } from '@/components/mail/email-list';
 import { FilterChips } from '@/components/mail/filter-chips';
 import { HeadsUpBanner } from '@/components/mail/heads-up-banner';
 import { ProfileAvatar } from '@/components/settings/profile-avatar';
 import { ThemedView } from '@/components/themed-view';
-import { TopBarTitle } from '@/components/ui/top-bar-title';
+import { AppHeader } from '@/components/ui/app-header';
 import { useAppState } from '@/context/app-state';
 import { filterEmails, getEmails, groupEmailsByDay, type EmailFilter } from '@/services/mailService';
 import type { Email } from '@/types/mail';
 
 export default function HomeScreen() {
   const { profile } = useAppState();
-  const insets = useSafeAreaInsets();
   const [emails, setEmails] = useState<Email[]>([]);
   const [filter, setFilter] = useState<EmailFilter>('all');
+  const hasLoadedOnce = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
-      getEmails().then(setEmails);
+      let cancelled = false;
+      const load = () => getEmails().then((result) => {
+        if (cancelled) return;
+        if (hasLoadedOnce.current) {
+          // Only animate updates after the first load — a new/reordered
+          // row (e.g. a new email arriving via the poll below) smoothly
+          // slides/fades in instead of the list abruptly jumping. Skipped
+          // on the very first load so the initial list doesn't cascade in.
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        }
+        hasLoadedOnce.current = true;
+        setEmails(result);
+      });
+
+      load();
+      // backend/api polls Gmail every ~75s and classifies in the
+      // background — without this, new mail only appears after leaving
+      // and returning to this screen (which re-triggers useFocusEffect).
+      const interval = setInterval(load, 30_000);
+      return () => {
+        cancelled = true;
+        clearInterval(interval);
+      };
     }, [])
   );
 
@@ -33,14 +54,14 @@ export default function HomeScreen() {
   const sections = useMemo(() => groupEmailsByDay(filterEmails(emails, filter)), [emails, filter]);
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.push('/profile')} hitSlop={8}>
-          <ProfileAvatar name={profile.name} avatarUrl={profile.avatarUrl} size={36} />
-        </Pressable>
-        <TopBarTitle />
-        <View style={styles.spacer} />
-      </View>
+    <ThemedView style={styles.container}>
+      <AppHeader
+        leading={
+          <Pressable onPress={() => router.push('/profile')} hitSlop={8}>
+            <ProfileAvatar name={profile.name} avatarUrl={profile.avatarUrl} size={36} />
+          </Pressable>
+        }
+      />
       <EmailList
         sections={sections}
         onSelect={(id) => router.push(`/mail/${id}`)}
@@ -58,15 +79,5 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  spacer: {
-    width: 36,
   },
 });

@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Palette } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 function initialsFor(name: string): string {
@@ -35,7 +35,7 @@ export function ProfileAvatar({
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.15)' : `${tint}22`,
+          backgroundColor: colorScheme === 'dark' ? Palette.tintSoftDark : Palette.tintSoftLight,
         },
       ]}>
       <ThemedText style={[styles.initials, { color: tint, fontSize: size * 0.38 }]} type="defaultSemiBold">
@@ -46,7 +46,7 @@ export function ProfileAvatar({
 
   if (!ring) return avatar;
 
-  const ringPadding = Math.max(3, Math.round(size * 0.045));
+  const ringPadding = Math.max(2, Math.round(size * 0.035));
   return (
     <View
       style={[
@@ -54,7 +54,7 @@ export function ProfileAvatar({
         {
           padding: ringPadding,
           borderRadius: (size + ringPadding * 2) / 2,
-          borderColor: colorScheme === 'dark' ? 'rgba(37,99,235,0.35)' : '#DCE7FB',
+          borderColor: colorScheme === 'dark' ? 'rgba(34,211,238,0.28)' : Palette.tintSoftLight,
         },
       ]}>
       {avatar}
@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
     lineHeight: undefined,
   },
   ring: {
-    borderWidth: 3,
+    borderWidth: 2,
   },
 });

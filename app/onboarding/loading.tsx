@@ -5,8 +5,9 @@ import { StyleSheet, View } from 'react-native';
 import { mockEmails } from '@/data/mockEmails';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { GlassCard } from '@/components/ui/glass-card';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
+import { Colors, Palette } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Provider } from '@/types/mail';
@@ -64,49 +65,54 @@ export default function AnalyzingInboxScreen() {
       </View>
 
       <View style={styles.steps}>
-        <View style={[styles.stepCard, { backgroundColor: Colors[colorScheme].card, borderColor: Colors[colorScheme].border }]}>
-          <View style={[styles.stepIcon, { backgroundColor: colorScheme === 'dark' ? 'rgba(37,99,235,0.18)' : '#EAF0FE' }]}>
-            <IconSymbol name="doc.text.fill" size={20} color={Colors[colorScheme].tint} />
-          </View>
-          <View style={styles.stepText}>
-            <ThemedText type="defaultSemiBold" style={styles.stepTitle}>
-              Indexing Threads
-            </ThemedText>
-            <ThemedText style={[styles.stepSubtitle, { color: Colors[colorScheme].icon }]}>
-              Checking {UNREAD_COUNT} unread messages
-            </ThemedText>
-          </View>
-          <IconSymbol name="checkmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
-        </View>
-
-        <View
-          style={[
-            styles.stepCard,
-            styles.activeStepCard,
-            { backgroundColor: colorScheme === 'dark' ? 'rgba(37,99,235,0.14)' : '#EAF0FE', borderColor: Colors[colorScheme].tint },
-          ]}>
-          <View style={styles.activeStepRow}>
-            <View style={[styles.stepIcon, { backgroundColor: '#fff' }]}>
-              <IconSymbol name="exclamationmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
+        <GlassCard radius={16}>
+          <View style={styles.stepCard}>
+            <View style={[styles.stepIcon, { backgroundColor: colorScheme === 'dark' ? Palette.tintSoftDark : Palette.tintSoftLight }]}>
+              <IconSymbol name="doc.text.fill" size={20} color={Colors[colorScheme].tint} />
             </View>
             <View style={styles.stepText}>
               <ThemedText type="defaultSemiBold" style={styles.stepTitle}>
-                Urgency Check
+                Indexing Threads
               </ThemedText>
               <ThemedText style={[styles.stepSubtitle, { color: Colors[colorScheme].icon }]}>
-                Calculating your priority score…
+                Checking {UNREAD_COUNT} unread messages
               </ThemedText>
             </View>
+            <IconSymbol name="checkmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
           </View>
-          <View style={[styles.progressTrack, { backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : '#DCE6FB' }]}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${Math.round(progress * 100)}%`, backgroundColor: Colors[colorScheme].tint },
-              ]}
-            />
+        </GlassCard>
+
+        <GlassCard
+          radius={16}
+          intensity={55}
+          surfaceStyle={{
+            backgroundColor: colorScheme === 'dark' ? Palette.tintSoftDark : Palette.tintSoftLight,
+            borderColor: Colors[colorScheme].tint,
+          }}>
+          <View style={[styles.stepCard, styles.activeStepCard]}>
+            <View style={styles.activeStepRow}>
+              <View style={[styles.stepIcon, { backgroundColor: '#fff' }]}>
+                <IconSymbol name="exclamationmark.circle.fill" size={20} color={Colors[colorScheme].tint} />
+              </View>
+              <View style={styles.stepText}>
+                <ThemedText type="defaultSemiBold" style={styles.stepTitle}>
+                  Urgency Check
+                </ThemedText>
+                <ThemedText style={[styles.stepSubtitle, { color: Colors[colorScheme].icon }]}>
+                  Calculating your priority score…
+                </ThemedText>
+              </View>
+            </View>
+            <View style={[styles.progressTrack, { backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : Palette.borderLight }]}>
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: `${Math.round(progress * 100)}%`, backgroundColor: Colors[colorScheme].tint },
+                ]}
+              />
+            </View>
           </View>
-        </View>
+        </GlassCard>
       </View>
 
       <View style={[styles.footerPill, { backgroundColor: Colors[colorScheme].card, borderColor: Colors[colorScheme].border }]}>
@@ -146,8 +152,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    borderWidth: 1,
-    borderRadius: 16,
     padding: 16,
   },
   activeStepCard: {

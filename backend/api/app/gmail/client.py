@@ -1,5 +1,8 @@
 import base64
 from datetime import datetime, timezone
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from html import unescape
 from html.parser import HTMLParser
@@ -218,9 +221,19 @@ def fetch_body(user: User, gmail_id: str) -> str:
     return _extract_body(message["payload"])
 
 
-def send_reply(user: User, email: EmailMessage, body_text: str) -> None:
-    """Sends a reply in an existing thread. Only ever called from an explicit,
-    per-email user action (the in-app Send button) — never from the poller.
+def send_reply(
+    user: User,
+    email: EmailMessage,
+    body_text: str,
+    attachments: list[dict] | None = None,
+) -> None:
+    """Sends a reply in an existing thread, with optional attachments.
+    Only ever called from an explicit, per-email user action (the in-app
+    Send button) — never from the poller.
+
+    `attachments` is a list of plain dicts (not a pydantic model — kept
+    generic here rather than importing a routes-layer type into the Gmail
+    client): {"filename": str, "mime_type": str, "content_base64": str}.
     """
     credentials = _credentials_from_user(user)
     service = build("gmail", "v1", credentials=credentials)
@@ -229,7 +242,21 @@ def send_reply(user: User, email: EmailMessage, body_text: str) -> None:
     if not subject.lower().startswith("re:"):
         subject = f"Re: {subject}"
 
-    message = MIMEText(body_text)
+    if attachments:
+        message = MIMEMultipart()
+        message.attach(MIMEText(body_text))
+        for attachment in attachments:
+            main_type, _, sub_type = (attachment.get("mime_type") or "application/octet-stream").partition("/")
+            part = MIMEBase(main_type or "application", sub_type or "octet-stream")
+            part.set_payload(base64.b64decode(attachment["content_base64"]))
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition", f'attachment; filename="{attachment["filename"]}"'
+            )
+            message.attach(part)
+    else:
+        message = MIMEText(body_text)
+
     message["To"] = email.sender
     message["Subject"] = subject
     raw = base64.urlsafe_b64encode(message.as_bytes()).decode()

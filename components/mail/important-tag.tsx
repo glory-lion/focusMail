@@ -16,7 +16,7 @@ export function ImportantTag({ important, size = 'sm' }: { important: boolean; s
         styles.tag,
         isMd && styles.tagMd,
         important
-          ? { backgroundColor: colorScheme === 'dark' ? 'rgba(239,68,68,0.18)' : `${red}1A`, borderColor: red }
+          ? { backgroundColor: colorScheme === 'dark' ? 'rgba(225,29,72,0.14)' : 'rgba(225,29,72,0.09)', borderColor: red }
           : { backgroundColor: 'transparent', borderColor: Colors[colorScheme].icon },
       ]}>
       <ThemedText

@@ -101,7 +101,7 @@ export function TimePicker({
 
 const styles = StyleSheet.create({
   wrapper: {
-    gap: 10,
+    gap: 8,
   },
   row: {
     flexDirection: 'row',
@@ -109,16 +109,16 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   timeBox: {
-    width: 96,
+    width: 94,
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 10,
+    borderRadius: 8,
+    paddingVertical: 9,
     paddingHorizontal: 16,
   },
   timeText: {
-    fontSize: 21,
-    lineHeight: 26,
+    fontSize: 20,
+    lineHeight: 25,
     fontVariant: ['tabular-nums'],
   },
   stepper: {
@@ -127,14 +127,15 @@ const styles = StyleSheet.create({
   periodToggle: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 8,
     overflow: 'hidden',
   },
   periodOption: {
-    paddingVertical: 8,
+    paddingVertical: 9,
     paddingHorizontal: 14,
   },
   periodLabel: {
     fontSize: 12,
+    lineHeight: 16,
   },
 });

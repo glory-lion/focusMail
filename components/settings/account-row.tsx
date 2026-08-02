@@ -28,7 +28,7 @@ export function AccountRow({
       onPress={onPress}
       disabled={!onPress || disabled}
       style={({ pressed }) => [styles.row, disabled && styles.disabled, pressed && onPress && !disabled && styles.pressed]}>
-      <ProviderLogo provider={provider} size={44} />
+      <ProviderLogo provider={provider} size={42} />
       <View style={styles.textColumn}>
         <ThemedText type="defaultSemiBold" style={styles.title} numberOfLines={1}>
           {title}
@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    paddingVertical: 14,
+    gap: 15,
+    paddingVertical: 16,
   },
   pressed: {
     opacity: 0.65,
@@ -61,8 +61,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
+    lineHeight: 20,
   },
   subtitle: {
     fontSize: 12,
+    lineHeight: 17,
   },
 });

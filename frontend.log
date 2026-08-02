@@ -1,0 +1,298 @@
+
+> focus-mail-app@1.0.0 web
+> expo start --web
+
+env: load .env
+env: export EXPO_PUBLIC_API_URL
+Starting project at D:\Hackathon\Acacia
+React Compiler enabled
+Starting Metro Bundler
+Waiting on http://localhost:8081
+Logs for your project will appear below.
+Web node_modules\expo-router\entry.js ▓▓▓░░░░░░░░░░░░░ 19.0% (111/273)
+λ node_modules\expo-router\node\render.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.2% (362/516)
+Web node_modules\expo-router\entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 47.2% (339/494)
+λ node_modules\expo-router\node\render.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 63.2% (632/795)
+λ Bundled 8825ms node_modules\expo-router\node\render.js (1211 modules)
+λ Bundled 1588ms node_modules\expo-router\node\render.js (1 module)
+Web node_modules\expo-router\entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1220/1220)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+"shadow*" style props are deprecated. Use "boxShadow".
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 4899ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 12217ms node_modules\expo-router\entry.js (1220 modules)
+Web node_modules\expo-router\entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 60.2% (641/828)
+Web Bundled 1467ms node_modules\expo-router\entry.js (1221 modules)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 745ms node_modules\expo-router\node\render.js (1 module)
+Web Bundled 1964ms node_modules\expo-router\entry.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Error: Premature close
+    at onclose (node:internal/streams/end-of-stream:162:30)
+    at processTicksAndRejections (node:internal/process/task_queues:85:11)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 86ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 1138ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 97ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 100ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 1394ms node_modules\expo-router\entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 729ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 2301ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 80ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 88ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 1085ms node_modules\expo-router\entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ node_modules\expo-router\node\render.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 5737ms node_modules\expo-router\node\render.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ node_modules\expo-router\node\render.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 7157ms node_modules\expo-router\entry.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 145ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 80ms node_modules\expo-router\node\render.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 1999ms node_modules\expo-router\entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 1407ms node_modules\expo-router\node\render.js (1 module)
+Web Bundled 3342ms node_modules\expo-router\entry.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 51ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 39ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 1842ms node_modules\expo-router\entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+ ERROR  SyntaxError: D:\Hackathon\Acacia\app\mail\[id].tsx: Expected corresponding JSX closing tag for <GlassCard>. (352:6)
+
+  350 |
+  351 |         <Animated.View style={{ height: shiftAnim }} />
+> 352 |       </Animated.ScrollView>
+      |       ^
+  353 |     </ThemedView>
+  354 |   );
+  355 | }
+    at constructor (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:6616:19)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4739:16)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4710:32)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4710:32)
+    at TypeScriptParserMixin.jsxParseElement (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4761:17)
+    at TypeScriptParserMixin.parseExprAtom (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4771:19)
+    at TypeScriptParserMixin.parseExprSubscripts (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11098:23)
+    at TypeScriptParserMixin.parseUpdate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11083:21)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11063:23)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9854:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10916:61)
+    at TypeScriptParserMixin.parseExprOps (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10921:23)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10898:23)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10848:21)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9792:39
+    at TypeScriptParserMixin.tryParse (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:6924:20)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9792:18)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10817:39
+    at TypeScriptParserMixin.allowInAnd (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12443:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10817:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12510:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11692:28)
+    at TypeScriptParserMixin.parseExprAtom (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11348:23)
+    at TypeScriptParserMixin.parseExprAtom (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4776:20)
+    at TypeScriptParserMixin.parseExprSubscripts (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11098:23)
+    at TypeScriptParserMixin.parseUpdate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11083:21)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11063:23)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9854:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10916:61)
+    at TypeScriptParserMixin.parseExprOps (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10921:23)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10898:23)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10848:21)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9803:20)
+    at TypeScriptParserMixin.parseExpressionBase (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10801:23)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10797:39
+    at TypeScriptParserMixin.allowInAnd (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12438:16)
+    at TypeScriptParserMixin.parseExpression (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10797:17)
+    at TypeScriptParserMixin.parseReturnStatement (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13159:28)
+    at TypeScriptParserMixin.parseStatementContent (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12815:21)
+    at TypeScriptParserMixin.parseStatementContent (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9525:18)
+    at TypeScriptParserMixin.parseStatementLike (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12784:17)
+    at TypeScriptParserMixin.parseStatementListItem (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12764:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13333:61)
+    at TypeScriptParserMixin.parseBlockBody (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13326:10)
+    at TypeScriptParserMixin.parseBlock (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13314:10)
+    at TypeScriptParserMixin.parseFunctionBody (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12117:24)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12103:10)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9189:18)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13462:12
+[metro-file-map] Cache write error
+: Error: ENOSPC: no space left on device, write
+    at write (node:internal/fs/promises:738:8)
+    at writeFileHandle (node:internal/fs/promises:495:7)
+    at D:\Hackathon\Acacia\node_modules\metro-file-map\src\cache\DiskCacheManager.js:80:11 {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundling failed 292ms node_modules\expo-router\entry.js (1 module)
+λ Bundling failed 350ms node_modules\expo-router\node\render.js (1 module)
+
+Metro error: SyntaxError: D:\Hackathon\Acacia\app\mail\[id].tsx: Expected corresponding JSX closing tag for <GlassCard>. (352:6)
+
+[0m [90m 350 |[39m
+ [90m 351 |[39m         [33m<[39m[33mAnimated[39m[33m.[39m[33mView[39m style[33m=[39m{{ height[33m:[39m shiftAnim }} [33m/[39m[33m>[39m
+[31m[1m>[22m[39m[90m 352 |[39m       [33m<[39m[33m/[39m[33mAnimated[39m[33m.[39m[33mScrollView[39m[33m>[39m
+ [90m     |[39m       [31m[1m^[22m[39m
+ [90m 353 |[39m     [33m<[39m[33m/[39m[33mThemedView[39m[33m>[39m
+ [90m 354 |[39m   )[33m;[39m
+ [90m 355 |[39m }[0m
+
+Call Stack
+  <unknown> (app\mail\[id].tsx)
+ ERROR  SyntaxError: D:\Hackathon\Acacia\app\mail\[id].tsx: Expected corresponding JSX closing tag for <GlassCard>. (352:6)
+
+  350 |
+  351 |         <Animated.View style={{ height: shiftAnim }} />
+> 352 |       </Animated.ScrollView>
+      |       ^
+  353 |     </ThemedView>
+  354 |   );
+  355 | }
+    at constructor (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:6616:19)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4739:16)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4710:32)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4710:32)
+    at TypeScriptParserMixin.jsxParseElement (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4761:17)
+    at TypeScriptParserMixin.parseExprAtom (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4771:19)
+    at TypeScriptParserMixin.parseExprSubscripts (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11098:23)
+    at TypeScriptParserMixin.parseUpdate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11083:21)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11063:23)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9854:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10916:61)
+    at TypeScriptParserMixin.parseExprOps (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10921:23)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10898:23)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10848:21)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9792:39
+    at TypeScriptParserMixin.tryParse (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:6924:20)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9792:18)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10817:39
+    at TypeScriptParserMixin.allowInAnd (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12443:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10817:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12510:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11692:28)
+    at TypeScriptParserMixin.parseExprAtom (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11348:23)
+    at TypeScriptParserMixin.parseExprAtom (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:4776:20)
+    at TypeScriptParserMixin.parseExprSubscripts (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11098:23)
+    at TypeScriptParserMixin.parseUpdate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11083:21)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:11063:23)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9854:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10916:61)
+    at TypeScriptParserMixin.parseExprOps (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10921:23)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10898:23)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10848:21)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9803:20)
+    at TypeScriptParserMixin.parseExpressionBase (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10801:23)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10797:39
+    at TypeScriptParserMixin.allowInAnd (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12438:16)
+    at TypeScriptParserMixin.parseExpression (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:10797:17)
+    at TypeScriptParserMixin.parseReturnStatement (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13159:28)
+    at TypeScriptParserMixin.parseStatementContent (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12815:21)
+    at TypeScriptParserMixin.parseStatementContent (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9525:18)
+    at TypeScriptParserMixin.parseStatementLike (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12784:17)
+    at TypeScriptParserMixin.parseStatementListItem (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12764:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13333:61)
+    at TypeScriptParserMixin.parseBlockBody (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13326:10)
+    at TypeScriptParserMixin.parseBlock (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13314:10)
+    at TypeScriptParserMixin.parseFunctionBody (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12117:24)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:12103:10)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:9189:18)
+    at D:\Hackathon\Acacia\node_modules\@babel\parser\lib\index.js:13462:12
+Web Bundling failed 421ms node_modules\expo-router\entry.js (1 module)
+λ Bundling failed 591ms node_modules\expo-router\node\render.js (1 module)
+
+Metro error: SyntaxError: D:\Hackathon\Acacia\app\mail\[id].tsx: Expected corresponding JSX closing tag for <GlassCard>. (352:6)
+
+[0m [90m 350 |[39m
+ [90m 351 |[39m         [33m<[39m[33mAnimated[39m[33m.[39m[33mView[39m style[33m=[39m{{ height[33m:[39m shiftAnim }} [33m/[39m[33m>[39m
+[31m[1m>[22m[39m[90m 352 |[39m       [33m<[39m[33m/[39m[33mAnimated[39m[33m.[39m[33mScrollView[39m[33m>[39m
+ [90m     |[39m       [31m[1m^[22m[39m
+ [90m 353 |[39m     [33m<[39m[33m/[39m[33mThemedView[39m[33m>[39m
+ [90m 354 |[39m   )[33m;[39m
+ [90m 355 |[39m }[0m
+
+Call Stack
+  <unknown> (app\mail\[id].tsx)
+Web .expo\static-tmp\_error.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web .expo\static-tmp\_error.js ▓▓▓▓░░░░░░░░░░░░ 25.0% ( 8/28)
+Web .expo\static-tmp\_error.js ▓▓▓▓░░░░░░░░░░░░ 25.0% (16/58)
+Web .expo\static-tmp\_error.js ▓▓▓▓░░░░░░░░░░░░ 27.5% ( 65/124)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓░░░░░░░░ 52.7% (122/168)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 75.7% (184/216)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 83.6% (226/251)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 83.6% (253/285)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 91.9% (279/291)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 92.7% (290/304)
+[metro-file-map] Cache write error
+: Error: ENOSPC: no space left on device, write
+    at write (node:internal/fs/promises:738:8)
+    at writeFileHandle (node:internal/fs/promises:495:7)
+    at D:\Hackathon\Acacia\node_modules\metro-file-map\src\cache\DiskCacheManager.js:80:11 {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.3% (313/319)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.4% (318/319)
+Web .expo\static-tmp\_error.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (319/319)
+Web Bundled 45377ms .expo\static-tmp\_error.js (323 modules)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 2505ms node_modules\expo-router\node\render.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 5710ms node_modules\expo-router\entry.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+λ Bundled 535ms node_modules\expo-router\node\render.js (1 module)
+Web Bundled 1955ms node_modules\expo-router\entry.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 6610ms node_modules\expo-router\entry.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+"shadow*" style props are deprecated. Use "boxShadow".
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 155ms node_modules\expo-router\node\render.js (1 module)
+Web Bundled 3496ms node_modules\expo-router\entry.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 91ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 77ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 2068ms node_modules\expo-router\entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 1386ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 3617ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 104ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 59ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 862ms node_modules\expo-router\entry.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 18ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 591ms node_modules\expo-router\entry.js (1 module)
+Web node_modules\expo-router\entry.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+λ Bundled 207ms node_modules\expo-router\node\render.js (1 module)
+"shadow*" style props are deprecated. Use "boxShadow".
+Web Bundled 1211ms node_modules\expo-router\entry.js (1 module)

@@ -20,5 +20,5 @@ def send_immediate_notification(user: User, email: EmailMessage) -> None:
         user.push_token,
         title="Important email",
         body=email.subject,
-        data={"gmail_link": email.gmail_link},
+        data={"email_id": str(email.id), "gmail_link": email.gmail_link},
     )

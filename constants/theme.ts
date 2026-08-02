@@ -4,47 +4,55 @@
 
 import { Platform } from 'react-native';
 
-const primary = '#2563EB';
-const secondary = '#64748B';
-const tertiary = '#F1F5F9';
-const neutral = '#0F172A';
+const primary = '#0E7490';
+const secondary = '#667085';
+const tertiary = '#F3F6F8';
+const neutral = '#101828';
 
 export const Palette = {
   primary,
   secondary,
   tertiary,
   neutral,
-  iconBlue: '#4F6EF7',
-  iconPurple: '#7C6FF0',
-  critical: '#F87171',
-  warning: '#FB923C',
-  action: '#818CF8',
-  panelBackground: '#0B0F19',
-  importantRed: '#EF4444',
-  unreadBackgroundLight: '#E1E9FA',
-  unreadBackgroundDark: 'rgba(37,99,235,0.14)',
+  iconBlue: '#0891B2',
+  iconPurple: '#7C3AED',
+  critical: '#E11D48',
+  warning: '#F59E0B',
+  action: '#14B8A6',
+  panelBackground: '#0B1220',
+  importantRed: '#E11D48',
+  unreadBackgroundLight: '#E8F7FA',
+  unreadBackgroundDark: 'rgba(34,211,238,0.12)',
+  tintSoftLight: '#DDF4F8',
+  tintSoftDark: 'rgba(34,211,238,0.14)',
+  surfaceLight: '#FFFFFF',
+  surfaceDark: '#172033',
+  surfaceMutedLight: '#F7FAFC',
+  surfaceMutedDark: 'rgba(255,255,255,0.055)',
+  borderLight: '#D7DEE8',
+  borderDark: 'rgba(226,232,240,0.16)',
 };
 
 export const Colors = {
   light: {
     text: neutral,
-    background: '#EEF2FC',
+    background: '#F6F8FB',
     tint: primary,
     icon: secondary,
     tabIconDefault: secondary,
     tabIconSelected: primary,
-    card: '#fff',
-    border: '#94A3B8',
+    card: Palette.surfaceLight,
+    border: Palette.borderLight,
   },
   dark: {
-    text: '#F1F5F9',
-    background: neutral,
-    tint: primary,
-    icon: '#94A3B8',
-    tabIconDefault: '#94A3B8',
-    tabIconSelected: primary,
-    card: '#1E293B',
-    border: 'rgba(241,245,249,0.28)',
+    text: '#F8FAFC',
+    background: '#0B1220',
+    tint: '#22D3EE',
+    icon: '#98A2B3',
+    tabIconDefault: '#667085',
+    tabIconSelected: '#22D3EE',
+    card: Palette.surfaceDark,
+    border: Palette.borderDark,
   },
 };
 

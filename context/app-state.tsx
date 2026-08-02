@@ -5,6 +5,7 @@ import { defaultNotificationSettings, defaultProfile } from '@/data/mockProfile'
 import { connectAccount as connectAccountService } from '@/services/accountService';
 import { setSessionToken } from '@/services/apiClient';
 import { getSettings, updateSettings as updateSettingsService } from '@/services/settingsService';
+import { registerForPushNotificationsAsync, registerPushToken } from '@/services/notificationService';
 import type { Account, NotificationSettings, Provider, UserProfile } from '@/types/mail';
 
 const STORAGE_KEY = 'focus-mail-app/state';
@@ -79,6 +80,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     if (!account?.connected || account.provider !== 'gmail') return;
     getSettings()
       .then(setNotificationSettings)
+      .catch(() => {});
+  }, [account?.connected, account?.provider]);
+
+  // Best-effort: register this device for push once a real Gmail session
+  // exists. Silently no-ops on web, on a denied permission, or on a
+  // checkout with no EAS project configured — the daily-digest/immediate
+  // toggles still work either way, this just enables the actual push.
+  useEffect(() => {
+    if (!account?.connected || account.provider !== 'gmail') return;
+    registerForPushNotificationsAsync()
+      .then((token) => (token ? registerPushToken(token) : undefined))
       .catch(() => {});
   }, [account?.connected, account?.provider]);
 

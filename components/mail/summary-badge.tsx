@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Colors, Fonts } from '@/constants/theme';
+import { Colors, Fonts, Palette } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export function SummaryBadge({
@@ -16,7 +16,7 @@ export function SummaryBadge({
   borderColor?: string;
 }) {
   const colorScheme = useColorScheme() ?? 'light';
-  const background = colorScheme === 'dark' ? '#0A0E18' : '#DEE6F8';
+  const background = colorScheme === 'dark' ? Palette.tintSoftDark : Palette.tintSoftLight;
 
   return (
     <View
@@ -26,7 +26,7 @@ export function SummaryBadge({
         expanded && styles.expanded,
         flush && [styles.flush, { borderTopColor: borderColor ?? Colors[colorScheme].border }],
       ]}>
-      <ThemedText type="defaultSemiBold" style={styles.label} lightColor={Colors.light.tint} darkColor="#93B4F8">
+      <ThemedText type="defaultSemiBold" style={styles.label} lightColor={Colors.light.tint} darkColor={Colors.dark.tint}>
         SUMMARY:
       </ThemedText>
       <ThemedText style={styles.text}>{text}</ThemedText>

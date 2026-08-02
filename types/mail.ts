@@ -29,6 +29,12 @@ export interface Attachment {
   fileType: string;
 }
 
+export interface ActionItem {
+  id: string;
+  text: string;
+  dueDate: string | null;
+}
+
 export interface Email {
   id: string;
   sender: EmailSender;
@@ -40,9 +46,11 @@ export interface Email {
   gmailLink: string;
   important: boolean;
   urgencyScore: number;
+  deadline: string | null;
   summary: string;
   detailedSummary: DetailedSummary;
   suggestedReply: string;
+  actionItems: ActionItem[];
   read: boolean;
   hasAttachment: boolean;
   attachments: Attachment[];
